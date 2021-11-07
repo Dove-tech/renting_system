@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from .serializers import *
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from django.db import connection
+from django.db import connection, transaction
 
 
 def executeSQL(sql):
@@ -31,7 +31,7 @@ class SignUpViewSet(viewsets.ModelViewSet):
         return queryset
 
     def create(self, request):
-        id = request.data.get('id')
+        # id = request.data.get('id')
         name = request.data.get('name', None)
         password = request.data.get('password', None)
 
@@ -40,7 +40,7 @@ class SignUpViewSet(viewsets.ModelViewSet):
         # 如果采用上面的方式来获取数据库的返回值，那么要注意res是一个map的形式，需要进行转换才能变成response里面能直接写进去的内容
 
         try:
-            #user = User.objects.raw('SELECT * FROM User where name = %s', [name])
+            # user = User.objects.raw('SELECT * FROM User where name = %s', [name])
             user = User.objects.get(name=name)
             print("user: " + str(user))
 
@@ -73,22 +73,21 @@ class ResetPasswordViewSet(viewsets.ModelViewSet):
         # 如果采用上面的方式来获取数据库的返回值，那么要注意res是一个map的形式，需要进行转换才能变成response里面能直接写进去的内容
 
         try:
-            #user = User.objects.raw('SELECT * FROM User where name = %s', [name])
-            user = User.objects.get(name=name)
-            # print("user:  "+ str(user))
+            cursor = connection.cursor()
+            cursor.execute('SELECT * FROM User where name = %s', [name])
 
         except User.DoesNotExist:
-            return Response({"response": {"error": "THE USER DOES NOT EXIST"}, "status": 400},
+            return Response({"response": {"error": "???."}, "status": 400},
                             status=status.HTTP_400_BAD_REQUEST)
-
-        else:
-            # print("id:" + (id))
-            instance = User.objects.raw('Update User SET  password = %s where id = 0', [password])
-            print("instance:    "+ str(instance))
             # instance = User(username=username, password=password, email=email, firstname=firstname, lastname=lastname)
-            for object in instance:
-                object.save()
-            return Response(
-                {"response": {"error": "OK", "name": instance.name, "password": instance.password},
-                 "status": 201}, status=status.HTTP_201_CREATED)
+            
+        else:
+            cursor.execute('Update User SET password = %s WHERE NAME = %s', [password, name])
 
+            cursor.execute('SELECT * FROM User WHERE NAME = %s', [name])
+            row = cursor.fetchone()
+
+            print("row", row)
+            return Response(
+                {"response": {"error": "OK", "id": row[0], "name": row[1], "password": row[2]},
+                 "status": 201}, status=status.HTTP_201_CREATED)
