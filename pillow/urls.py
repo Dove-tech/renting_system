@@ -1,6 +1,10 @@
 from django.urls import path
-from . import views
+from .views import *
+from rest_framework.routers import DefaultRouter
 
-urlpatterns = [
-    path('', views.index, name='index'),
-]
+router = DefaultRouter()
+
+router.register(r'user-signup', SignUpViewSet, basename = "signup")
+router.register(r'reset-password', ResetPasswordViewSet, basename = "resetpassword")
+
+urlpatterns = router.urls

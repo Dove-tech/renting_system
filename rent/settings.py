@@ -80,7 +80,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'UtoPillow',
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': '****',
         'HOST': 'localhost',
         'PORT': '3306'
     }
