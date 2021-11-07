@@ -64,7 +64,7 @@ class ResetPasswordViewSet(viewsets.ModelViewSet):
         return queryset
 
     def create(self, request):
-        id = request.data.get('id')
+        # id = request.data.get('id')
         name = request.data.get('name', None)
         password = request.data.get('password', None)
 
@@ -75,14 +75,20 @@ class ResetPasswordViewSet(viewsets.ModelViewSet):
         try:
             #user = User.objects.raw('SELECT * FROM User where name = %s', [name])
             user = User.objects.get(name=name)
+            # print("user:  "+ str(user))
 
-        except User.Exist:
-            instance = User.objects.raw('Update User SET name = %s, password = %s, id = %d', [name, password, id])
-            # instance = User(username=username, password=password, email=email, firstname=firstname, lastname=lastname)
-            instance.save()
-            return Response(
-                {"response": {"error": "OK", "id": instance.id, "name": instance.name, "password": instance.password},
-                 "status": 201}, status=status.HTTP_201_CREATED)
-        else:
-            return Response({"response": {"error": "???."}, "status": 400},
+        except User.DoesNotExist:
+            return Response({"response": {"error": "THE USER DOES NOT EXIST"}, "status": 400},
                             status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            # print("id:" + (id))
+            instance = User.objects.raw('Update User SET  password = %s where id = 0', [password])
+            print("instance:    "+ str(instance))
+            # instance = User(username=username, password=password, email=email, firstname=firstname, lastname=lastname)
+            for object in instance:
+                object.save()
+            return Response(
+                {"response": {"error": "OK", "name": instance.name, "password": instance.password},
+                 "status": 201}, status=status.HTTP_201_CREATED)
+
