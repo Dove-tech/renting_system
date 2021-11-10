@@ -1,3 +1,4 @@
+from django.http.response import JsonResponse
 from django.shortcuts import render
 
 # Create your views here.
@@ -7,7 +8,8 @@ from .serializers import *
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from django.db import connection, transaction
-
+from itertools import chain
+from django.db.models import Q
 
 def executeSQL(sql):
     with connection.cursor() as cursor:
@@ -49,13 +51,15 @@ class SignUpViewSet(viewsets.ModelViewSet):
             user = cursor.execute('SELECT MAX(id) as maxid FROM User')
             result_set = cursor.fetchone()
             max_id = result_set[0]
-            instance = User(id=int(max_id)+1, name=name, password=password)
+            instance = User(id=int(max_id) + 1, name=name, password=password)
             instance.save()
             return Response(
-                {"response": {"error": "OK", "id":int(max_id)+1, "name": instance.name, "password": instance.password},
+                {"response": {"error": "OK", "id": int(max_id) + 1, "name": instance.name,
+                              "password": instance.password},
                  "status": 201}, status=status.HTTP_201_CREATED)
         else:
-            return Response({"response": {"error": "This username have already existed"}, "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"response": {"error": "This username have already existed"}, "status": 400},
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class ResetPasswordViewSet(viewsets.ModelViewSet):
@@ -91,6 +95,55 @@ class ResetPasswordViewSet(viewsets.ModelViewSet):
                  "status": 201}, status=status.HTTP_201_CREATED)
 
 
+
+class SearchViewSet(viewsets.ModelViewSet):
+    serializer_class = ApartmentSerializer
+
+    def get_queryset(self):
+        queryset = Apartment.objects.all()
+        return queryset
+
+    def create(self, request):
+        name = request.data.get('name')
+        gym = request.data.get('gym')
+        parking = request.data.get('parking')
+        utility = request.data.get('utility')
+        laundry = request.data.get('laundry')
+        swimming_pool = request.data.get('swimming_pool')
+        min_price = request.data.get('min_price')
+        max_price = request.data.get('max_price')
+        start_date = request.data.get('start_date')
+
+        query = "SELECT * FROM Apartment WHERE "
+        if name != None:
+            query += "name = '{}'".format(name)
+        if gym != "":
+            query += " and gym = {}".format(gym)
+        if parking != "":
+            query += " and parking = {}".format(parking)
+        if utility != "":
+            query += " and utility = {}".format(utility)
+        if laundry != "":
+            query += " and laundry = {}".format(laundry)
+        if swimming_pool != "":
+            query += " and swimming_pool = {}".format(swimming_pool)
+        if start_date != "":
+            query += " and start_date > {}".format(start_date)
+        if min_price != "":
+            query += " and min_price > {} and max_price < {}".format(min_price, max_price)
+
+
+
+        cursor = connection.cursor()
+        print("query is %s",query)
+        # cursor.execute('SELECT * FROM Apartment a WHERE a.gym = case when %s = -1 then a.gym else %s end and a.parking = case when %s = -1 then a.parking else %s end',[gym, gym, parking, parking])
+        cursor.execute(query)
+        results = cursor.fetchall()
+        return Response(
+                {"response": {"error": "OK", "results": results},
+                 "status": 201}, status=status.HTTP_201_CREATED)
+
+
 class addToFavoriteViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteSerializer
     # serializer_class_user = UserSerializer
@@ -118,7 +171,9 @@ class addToFavoriteViewSet(viewsets.ModelViewSet):
             instance_user = User(id=user_set[0], name=user_set[1], password=user_set[2])
             cursor.execute('SELECT * FROM Room WHERE id = %s', [room_id])
             room_set = cursor.fetchone()
-            instance_room = Room(id=room_set[0], apartment_id=room_set[1], bedroom_num=room_set[2],bathroom_num=room_set[3], price=room_set[4],start_time=room_set[5], end_time=room_set[6], description=room_set[7])
+            instance_room = Room(id=room_set[0], apartment_id=room_set[1], bedroom_num=room_set[2],
+                                 bathroom_num=room_set[3], price=room_set[4], start_time=room_set[5],
+                                 end_time=room_set[6], description=room_set[7])
             instance = Favorite(user=instance_user, room=instance_room)
             instance.save()
             return Response(
@@ -126,18 +181,18 @@ class addToFavoriteViewSet(viewsets.ModelViewSet):
                  "status": 201}, status=status.HTTP_201_CREATED)
 
         else:
-            return Response({"response": {"error": "You have added this room to Favorite"}, "status": 400}, status=status.HTTP_400_BAD_REQUEST)
-
+            return Response({"response": {"error": "You have added this room to Favorite"}, "status": 400},
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class FavoriteViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteSerializer
     def get_queryset(self):
-        queryset = Favorite.objects.all()
-        return queryset
+        user = 1
+        allFavotite = Favorite.objects.filter(user=user).all()
+        return allFavotite
 
     def create(self, request):
-        # id = request.data.get('id')
         user_id = request.data.get('user', None)
         room_id = request.data.get('room', None)
         print(user_id)
