@@ -20,7 +20,7 @@ const favoriteList = [
     }
 ];
 
-class Signup extends Component {
+class Favorite extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -42,16 +42,14 @@ class Signup extends Component {
     }
 
     addFavorite = () => {
-        // const favoInfo = { user: 1, room: 4 };
-        // JSON.stringify();
-        // axios.post('/pillow/favorite/', favoInfo).then(res => {
-        //     console.log(res);
-        // }).catch(error => console.log(error.response.data));
-
-        const name = 'a';
-        axios.post('/pillow/search/', name).then(res => {
+        const favoInfo = { user: 1, room: 4 };
+        axios.post('/pillow/favorite/', favoInfo).then(res => {
             console.log(res);
         }).catch(error => console.log(error.response.data));
+    }
+
+    deleteFavorite = () => {
+        
     }
 
     render() {
@@ -68,4 +66,4 @@ class Signup extends Component {
     }
 }
 
-export default Signup;
+export default Favorite;

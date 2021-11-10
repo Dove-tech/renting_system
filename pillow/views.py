@@ -53,12 +53,18 @@ class SignUpViewSet(viewsets.ModelViewSet):
             user = cursor.execute('SELECT MAX(id) as maxid FROM User')
             result_set = cursor.fetchone()
             max_id = result_set[0]
-            instance = User(id=int(max_id) + 1, name=name, password=password)
-            instance.save()
-            return Response(
-                {"response": {"error": "OK", "id": int(max_id) + 1, "name": instance.name,
-                              "password": instance.password},
-                 "status": 201}, status=status.HTTP_201_CREATED)
+            # instance = User(id=int(max_id) + 1, name=name, password=password)
+            # instance.save()
+
+            cursor.execute("INSERT INTO User VALUE(%s, %s, %s)",
+                           [int(max_id) + 1, name, password])
+            return Response({"response": {"error": "OK", "id": int(max_id) + 1, "name": name,
+                                          "password": password}, "status": 201}, status=status.HTTP_201_CREATED)
+
+            # return Response(
+            #     {"response": {"error": "OK", "id": int(max_id) + 1, "name": instance.name,
+            #                   "password": instance.password},
+            #      "status": 201}, status=status.HTTP_201_CREATED)
         else:
             return Response({"response": {"error": "This username have already existed"}, "status": 400},
                             status=status.HTTP_400_BAD_REQUEST)
@@ -90,7 +96,8 @@ class ResetPasswordViewSet(viewsets.ModelViewSet):
         # instance = User(username=username, password=password, email=email, firstname=firstname, lastname=lastname)
 
         else:
-            cursor.execute('Update User SET password = %s WHERE NAME = %s', [password, name])
+            cursor.execute('Update User SET password = %s WHERE NAME = %s', [
+                           password, name])
             return Response(
                 {"response": {"error": "OK", "name": name, "password": password},
                  "status": 201}, status=status.HTTP_201_CREATED)
@@ -144,34 +151,106 @@ class SearchViewSet(viewsets.ModelViewSet):
         else:
             query += " and start_date = a.start_date"
         if min_price != None:
-            query += " and min_price > {} and max_price < {}".format(min_price, max_price)
+            query += " and min_price > {} and max_price < {}".format(
+                min_price, max_price)
 
         cursor = connection.cursor()
         cursor.execute(query)
-        r = [dict((cursor.description[i][0], str(value)) \
-               for i, value in enumerate(row)) for row in cursor.fetchall()]
+        r = [dict((cursor.description[i][0], str(value))
+                  for i, value in enumerate(row)) for row in cursor.fetchall()]
 
-        ret = json.dumps(r[0])
-        return Response(
+        try:
+            ret = json.dumps(r[0])
+        except:
+            return Response({"response": {"error": "No search result"}, "status": 400},
+                            status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(
                 {"response": {"error": "OK", "results": ret},
                  "status": 201}, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['POST'])
+    def adv_search(self, request):
+        name = request.data.get('name')
+        gym = request.data.get('gym')
+        parking = request.data.get('parking')
+        utility = request.data.get('utility')
+        laundry = request.data.get('laundry')
+        swimming_pool = request.data.get('swimming_pool')
+        min_price = request.data.get('min_price')
+        max_price = request.data.get('max_price')
+        start_date = request.data.get('start_date')
+        mean_rate = request.data.get('mean_rate')
+        query = "SELECT * FROM Apartment a WHERE "
+        if name != None:
+            query += "name = '{}'".format(name)
+        else:
+            query += "name = a.name"
+        if gym != None:
+            query += " and gym = {}".format(gym)
+        else:
+            query += " and gym = a.gym"
+        if parking != None:
+            query += " and parking = {}".format(parking)
+        else:
+            query += " and parking = a.parking"
+        if utility != None:
+            query += " and utility = {}".format(utility)
+        else:
+            query += " and utility = a.utility"
+        if laundry != None:
+            query += " and laundry = {}".format(laundry)
+        else:
+            query += " and laundry = a.laundry"
+        if swimming_pool != None:
+            query += " and swimming_pool = {}".format(swimming_pool)
+        else:
+            query += " and swimming_pool = a.swimming_pool"
+        if start_date != None:
+            query += " and start_date > {}".format(start_date)
+        else:
+            query += " and start_date = a.start_date"
+        if min_price != None:
+            query += " and min_price > {} and max_price < {}".format(
+                min_price, max_price)
+        else:
+            query += " and min_price = a.min_price and max_price = a.max_price"
+        if mean_rate != None:
+            query += " and id in (select apartment_id from Rating group by apartment_id having AVG(star) >= {})".format(mean_rate)
+
+        cursor = connection.cursor()
+        cursor.execute(query)
+        r = [dict((cursor.description[i][0], str(value))
+                  for i, value in enumerate(row)) for row in cursor.fetchall()]
+        try:
+            ret = json.dumps(r[0])
+        except:
+            return Response({"response": {"error": "No search result"}, "status": 400},
+                            status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(
+                {"response": {"error": "OK", "results": ret},
+                    "status": 201}, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['POST'])
     def addToFavorite(self, request):
         user_id = request.data.get('user', None)
         room_id = request.data.get('room', None)
         cursor = connection.cursor()
-        cursor.execute('SELECT * FROM Favorite WHERE user_id = %s AND room_id = %s', [user_id, room_id])
+        cursor.execute(
+            'SELECT * FROM Favorite WHERE user_id = %s AND room_id = %s', [user_id, room_id])
         result_set = cursor.fetchall()
         print(result_set)
 
         if not result_set:
             cursor.execute('SELECT * FROM User WHERE id = %s', [user_id])
             user_set = cursor.fetchone()
-            instance_user = User(id=user_set[0], name=user_set[1], password=user_set[2])
+            instance_user = User(
+                id=user_set[0], name=user_set[1], password=user_set[2])
             cursor.execute('SELECT * FROM Room WHERE id = %s', [room_id])
             room_set = cursor.fetchone()
-            cursor.execute('INSERT INTO Favorite VALUE(%s, %s)', [user_id, room_id])
+            cursor.execute('INSERT INTO Favorite VALUE(%s, %s)',
+                           [user_id, room_id])
             return Response(
                 {"response": {"error": "OK", "user": user_set[0], "room": room_set[0]},
                  "status": 201}, status=status.HTTP_201_CREATED)
@@ -196,12 +275,14 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         user_id = request.data.get('user', None)
         room_id = request.data.get('room', None)
         cursor = connection.cursor()
-        cursor.execute('SELECT * FROM Favorite WHERE user_id = %s AND room_id = %s', [user_id, room_id])
+        cursor.execute(
+            'SELECT * FROM Favorite WHERE user_id = %s AND room_id = %s', [user_id, room_id])
         result_set = cursor.fetchone()
         print(result_set)
 
         if result_set:
-            cursor.execute('DELETE  FROM Favorite WHERE room_id = %s AND user_id = %s ', [result_set[1], result_set[0]])
+            cursor.execute('DELETE  FROM Favorite WHERE room_id = %s AND user_id = %s ', [
+                           result_set[1], result_set[0]])
             return Response(
                 {"response": {"error": "OK", "user": user_id, "room": room_id},
                  "status": 201}, status=status.HTTP_201_CREATED)

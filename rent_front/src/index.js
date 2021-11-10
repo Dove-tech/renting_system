@@ -1,11 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Signup from './Favorite';
 import reportWebVitals from './reportWebVitals';
+// import Favorite from './Favorite';
+import Signup from './Signup';
 
 ReactDOM.render(
   <React.StrictMode>
+    {/* <Favorite /> */}
     <Signup />
   </React.StrictMode>,
   document.getElementById('root')
