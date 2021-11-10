@@ -9,6 +9,8 @@ ReactDOM.render(
   <React.StrictMode>
     {/* <Favorite /> */}
     <Signup />
+    <Signin />
+    <Resetpassword />
   </React.StrictMode>,
   document.getElementById('root')
 );
