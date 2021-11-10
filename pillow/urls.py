@@ -7,5 +7,5 @@ router = DefaultRouter()
 router.register(r'user-signup', SignUpViewSet, basename="signup")
 router.register(r'reset-password', ResetPasswordViewSet, basename="resetpassword")
 router.register(r'add-to-favorite', addToFavoriteViewSet, basename="addtofavorite")
-
+router.register(r'favorite', FavoriteViewSet, basename="favorite")
 urlpatterns = router.urls

@@ -108,9 +108,11 @@ class addToFavoriteViewSet(viewsets.ModelViewSet):
         print("room_id:" + str(room_id))
 
         cursor = connection.cursor()
-        favorite = cursor.execute('SELECT * FROM Favorite WHERE user_id = %s AND room_id = %s', [user_id, room_id])
+        cursor.execute('SELECT * FROM Favorite WHERE user_id = %s AND room_id = %s', [user_id, room_id])
+        result_set = cursor.fetchall()
+        print(result_set)
 
-        if favorite == 0:
+        if not result_set:
             cursor.execute('SELECT * FROM User WHERE id = %s', [user_id])
             user_set = cursor.fetchone()
             instance_user = User(id=user_set[0], name=user_set[1], password=user_set[2])
@@ -128,3 +130,30 @@ class addToFavoriteViewSet(viewsets.ModelViewSet):
 
 
 
+class FavoriteViewSet(viewsets.ModelViewSet):
+    serializer_class = FavoriteSerializer
+    def get_queryset(self):
+        queryset = Favorite.objects.all()
+        return queryset
+
+    def create(self, request):
+        # id = request.data.get('id')
+        user_id = request.data.get('user', None)
+        room_id = request.data.get('room', None)
+        print(user_id)
+        print(room_id)
+
+
+        cursor = connection.cursor()
+        cursor.execute('SELECT * FROM Favorite WHERE user_id = %s AND room_id = %s', [user_id, room_id])
+        result_set = cursor.fetchone()
+        print(result_set)
+
+        if result_set:
+            cursor.execute('DELETE  FROM Favorite WHERE room_id = %s AND user_id = %s ', [result_set[1], result_set[0]])
+            return Response(
+                {"response": {"error": "OK", "user": user_id, "room": room_id},
+                 "status": 201}, status=status.HTTP_201_CREATED)
+
+        else:
+            return Response({"response": {"error": "This room is not in favorite list"}, "status": 400}, status=status.HTTP_400_BAD_REQUEST)
