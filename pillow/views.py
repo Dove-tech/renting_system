@@ -11,6 +11,7 @@ from django.db import connection, transaction
 from itertools import chain
 from django.db.models import Q
 
+
 def executeSQL(sql):
     with connection.cursor() as cursor:
         cursor.execute(sql)
@@ -41,10 +42,8 @@ class SignUpViewSet(viewsets.ModelViewSet):
         # res = executeSQL(sql)
         # 如果采用上面的方式来获取数据库的返回值，那么要注意res是一个map的形式，需要进行转换才能变成response里面能直接写进去的内容
 
-
         cursor = connection.cursor()
         user = cursor.execute('SELECT * FROM User where name = %s', [name])
-
 
         # instance = User.objects.raw('Update User SET name = %s, password = %s', [name, password])
         if user == 0:
@@ -79,13 +78,12 @@ class ResetPasswordViewSet(viewsets.ModelViewSet):
         # res = executeSQL(sql)
         # 如果采用上面的方式来获取数据库的返回值，那么要注意res是一个map的形式，需要进行转换才能变成response里面能直接写进去的内容
 
-
         cursor = connection.cursor()
         user = cursor.execute('SELECT * FROM User where name = %s', [name])
 
         if user == 0:
             return Response({"response": {"error": "This username doesn't exist"}, "status": 400},
-                        status=status.HTTP_400_BAD_REQUEST)
+                            status=status.HTTP_400_BAD_REQUEST)
         # instance = User(username=username, password=password, email=email, firstname=firstname, lastname=lastname)
 
         else:
@@ -93,7 +91,6 @@ class ResetPasswordViewSet(viewsets.ModelViewSet):
             return Response(
                 {"response": {"error": "OK", "name": name, "password": password},
                  "status": 201}, status=status.HTTP_201_CREATED)
-
 
 
 class SearchViewSet(viewsets.ModelViewSet):
@@ -132,34 +129,18 @@ class SearchViewSet(viewsets.ModelViewSet):
         if min_price != "":
             query += " and min_price > {} and max_price < {}".format(min_price, max_price)
 
-
-
         cursor = connection.cursor()
-        print("query is %s",query)
+        print("query is %s", query)
         # cursor.execute('SELECT * FROM Apartment a WHERE a.gym = case when %s = -1 then a.gym else %s end and a.parking = case when %s = -1 then a.parking else %s end',[gym, gym, parking, parking])
         cursor.execute(query)
         results = cursor.fetchall()
         return Response(
-                {"response": {"error": "OK", "results": results},
-                 "status": 201}, status=status.HTTP_201_CREATED)
+            {"response": {"error": "OK", "results": results},
+             "status": 201}, status=status.HTTP_201_CREATED)
 
-
-class addToFavoriteViewSet(viewsets.ModelViewSet):
-    serializer_class = FavoriteSerializer
-    # serializer_class_user = UserSerializer
-
-    # override get_queryset or create queryset
-    def get_queryset(self):
-        queryset = Favorite.objects.all()
-        return queryset
-
-    def create(self, request):
-        # id = request.data.get('id')
+    def addToFavorite(self, request):
         user_id = request.data.get('user', None)
         room_id = request.data.get('room', None)
-        print("user_id:" + str(user_id))
-        print("room_id:" + str(room_id))
-
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM Favorite WHERE user_id = %s AND room_id = %s', [user_id, room_id])
         result_set = cursor.fetchall()
@@ -185,20 +166,30 @@ class addToFavoriteViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
+# class addToFavoriteViewSet(viewsets.ModelViewSet):
+#     serializer_class = FavoriteSerializer
+#
+#     # serializer_class_user = UserSerializer
+#
+#     # override get_queryset or create queryset
+#     def get_queryset(self):
+#         queryset = Favorite.objects.all()
+#         return queryset
+
+
+
+
 class FavoriteViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteSerializer
+
     def get_queryset(self):
         user = 1
         allFavotite = Favorite.objects.filter(user=user).all()
         return allFavotite
 
-    def create(self, request):
+    def deleteFavorite(self, request):
         user_id = request.data.get('user', None)
         room_id = request.data.get('room', None)
-        print(user_id)
-        print(room_id)
-
-
         cursor = connection.cursor()
         cursor.execute('SELECT * FROM Favorite WHERE user_id = %s AND room_id = %s', [user_id, room_id])
         result_set = cursor.fetchone()
@@ -211,4 +202,5 @@ class FavoriteViewSet(viewsets.ModelViewSet):
                  "status": 201}, status=status.HTTP_201_CREATED)
 
         else:
-            return Response({"response": {"error": "This room is not in favorite list"}, "status": 400}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"response": {"error": "This room is not in favorite list"}, "status": 400},
+                            status=status.HTTP_400_BAD_REQUEST)
