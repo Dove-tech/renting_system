@@ -9,12 +9,13 @@ import Signup from './Signup';
 import Signin from './Signin';
 import Resetpassword from './Resetpassword';
 import Search from './Search';
+import Main from './Main';
 
 
 ReactDOM.render(
   <Router>
       <Routes>
-      {/* <Route exact path='/' component={index}></Route> */}
+      <Route exact path='/' element={<Main />}></Route>
       <Route exact path='/search' element={<Search />} />
       <Route exact path='/signup' element={<Signup />} />
       <Route exact path='/signin' element={<Signin />} />
