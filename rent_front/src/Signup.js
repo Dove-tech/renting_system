@@ -33,7 +33,7 @@ class Signup extends Component {
     }
 
     getFavoriteList = () => {
-        axios.get('/pillow/favorite')
+        axios.get('/pillow/favorite/')
             .then(res => {
                 this.setState({favoriteList: res.data});
                 console.log(res);

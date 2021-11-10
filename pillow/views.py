@@ -7,10 +7,10 @@ from django.http import HttpResponse
 from .serializers import *
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from django.db import connection, transaction
 from itertools import chain
 from django.db.models import Q
-from rest_framework.decorators import action
 
 
 def executeSQL(sql):
@@ -102,7 +102,6 @@ class SearchViewSet(viewsets.ModelViewSet):
         return queryset
 
     def create(self, request):
-        print("requst:   ", request.data)
         name = request.data.get('name')
         gym = request.data.get('gym')
         parking = request.data.get('parking')
@@ -113,22 +112,36 @@ class SearchViewSet(viewsets.ModelViewSet):
         max_price = request.data.get('max_price')
         start_date = request.data.get('start_date')
 
-        query = "SELECT * FROM Apartment WHERE "
-        if name != None:
+        query = "SELECT * FROM Apartment a WHERE "
+        if name != '':
             query += "name = '{}'".format(name)
-        if gym != "":
+        else:
+            query += "name = a.name"
+        if gym != None:
             query += " and gym = {}".format(gym)
-        if parking != "":
+        else:
+            query += " and gym = a.gym"
+        if parking != None:
             query += " and parking = {}".format(parking)
-        if utility != "":
+        else:
+            query += " and parking = a.parking"
+        if utility != None:
             query += " and utility = {}".format(utility)
-        if laundry != "":
+        else:
+            query += " and utility = a.utility"
+        if laundry != None:
             query += " and laundry = {}".format(laundry)
-        if swimming_pool != "":
+        else:
+            query += " and laundry = a.laundry"
+        if swimming_pool != None:
             query += " and swimming_pool = {}".format(swimming_pool)
-        if start_date != "":
+        else:
+            query += " and swimming_pool = a.swimming_pool"
+        if start_date != None:
             query += " and start_date > {}".format(start_date)
-        if min_price != "":
+        else:
+            query += " and start_date = a.start_date"
+        if min_price != None:
             query += " and min_price > {} and max_price < {}".format(min_price, max_price)
 
         cursor = connection.cursor()
@@ -140,7 +153,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             {"response": {"error": "OK", "results": results},
              "status": 201}, status=status.HTTP_201_CREATED)
 
-    @action(detail = False,methods = ['POST'])
+    @action(detail=False, methods=['POST'])
     def addToFavorite(self, request):
         user_id = request.data.get('user', None)
         room_id = request.data.get('room', None)
@@ -155,7 +168,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             instance_user = User(id=user_set[0], name=user_set[1], password=user_set[2])
             cursor.execute('SELECT * FROM Room WHERE id = %s', [room_id])
             room_set = cursor.fetchone()
-            cursor.execute('INSERT INTO Favorite VALUE(%s, %s)',[user_id, room_id])
+            cursor.execute('INSERT INTO Favorite VALUE(%s, %s)', [user_id, room_id])
             return Response(
                 {"response": {"error": "OK", "user": user_set[0], "room": room_set[0]},
                  "status": 201}, status=status.HTTP_201_CREATED)
@@ -163,8 +176,6 @@ class SearchViewSet(viewsets.ModelViewSet):
         else:
             return Response({"response": {"error": "You have added this room to Favorite"}, "status": 400},
                             status=status.HTTP_400_BAD_REQUEST)
-
-
 
 
 class FavoriteViewSet(viewsets.ModelViewSet):
@@ -176,6 +187,7 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         print(allFavotite)
         return allFavotite
 
+    @action(detail=False, methods=['POST'])
     def deleteFavorite(self, request):
         print(request)
         user_id = request.data.get('user', None)
