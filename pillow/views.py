@@ -25,6 +25,27 @@ def executeSQL(sql):
         ]
     # 输入是一个string类型的sql语句，返回值是一个map
 
+class SignInViewSet(viewsets.ModelViewSet):
+    serializer_class = UserSerializer
+
+    def get_queryset(self):
+        queryset = User.objects.all()
+        return queryset
+
+    def create(self, request):
+        name = request.data.get('name', None)
+        password = request.data.get('password', None)
+        cursor = connection.cursor()
+        cursor.execute('SELECT * FROM User where name = %s', [name])
+        real_user = cursor.fetchone()
+        if password == real_user[2]:
+            return Response(
+                {"response": {"error": "OK", "id": real_user[0], "name": real_user[1]},
+                 "status": 201}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"response": {"error": "Password is not correct"}, "status": 400},
+                            status=status.HTTP_400_BAD_REQUEST)
+
 
 class SignUpViewSet(viewsets.ModelViewSet):
     # This viewset automatically provides `list`, `create`, `retrieve`,
@@ -76,10 +97,6 @@ class ResetPasswordViewSet(viewsets.ModelViewSet):
         # id = request.data.get('id')
         name = request.data.get('name', None)
         password = request.data.get('password', None)
-
-        # sql = "SELECT * FROM User_user WHERE username = {};".format(username)
-        # res = executeSQL(sql)
-        # 如果采用上面的方式来获取数据库的返回值，那么要注意res是一个map的形式，需要进行转换才能变成response里面能直接写进去的内容
 
         cursor = connection.cursor()
         user = cursor.execute('SELECT * FROM User where name = %s', [name])
