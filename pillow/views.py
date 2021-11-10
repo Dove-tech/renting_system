@@ -25,6 +25,7 @@ def executeSQL(sql):
         ]
     # 输入是一个string类型的sql语句，返回值是一个map
 
+
 class SignInViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
@@ -114,7 +115,7 @@ class ResetPasswordViewSet(viewsets.ModelViewSet):
 
         else:
             cursor.execute('Update User SET password = %s WHERE NAME = %s', [
-                           password, name])
+                password, name])
             return Response(
                 {"response": {"error": "OK", "name": name, "password": password},
                  "status": 201}, status=status.HTTP_201_CREATED)
@@ -233,7 +234,8 @@ class SearchViewSet(viewsets.ModelViewSet):
         else:
             query += " and min_price = a.min_price and max_price = a.max_price"
         if mean_rate != None:
-            query += " and id in (select apartment_id from Rating group by apartment_id having AVG(star) >= {})".format(mean_rate)
+            query += " and id in (select apartment_id from Rating group by apartment_id having AVG(star) >= {})".format(
+                mean_rate)
 
         cursor = connection.cursor()
         cursor.execute(query)
@@ -248,7 +250,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         else:
             return Response(
                 {"response": {"error": "OK", "results": ret},
-                    "status": 200}, status=status.HTTP_200_OK)
+                 "status": 200}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['POST'])
     def addToFavorite(self, request):
@@ -281,11 +283,21 @@ class SearchViewSet(viewsets.ModelViewSet):
 class FavoriteViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteSerializer
 
-    def get_queryset(self):
-        user = 1
-        allFavotite = Favorite.objects.filter(user=user).all()
-        print(allFavotite)
-        return allFavotite
+    @action(detail=False, methods=['POST'])
+    def query_all_favorite(self, request):
+        user_id = request.data.get('user', None)
+        cursor = connection.cursor()
+        string = 'SELECT * FROM Favorite WHERE user_id =' + str(user_id)
+        print(string)
+        cursor.execute(
+            'SELECT * FROM Favorite WHERE user_id = %s', [user_id])
+        result_set = cursor.fetchall()
+        all_rooms = []
+        for item in result_set:
+            all_rooms.append(item[1])
+        return Response(
+            {"response": {"error": "OK", "results": all_rooms},
+             "status": 201}, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['POST'])
     def deleteFavorite(self, request):
@@ -300,7 +312,7 @@ class FavoriteViewSet(viewsets.ModelViewSet):
 
         if result_set:
             cursor.execute('DELETE  FROM Favorite WHERE room_id = %s AND user_id = %s ', [
-                           result_set[1], result_set[0]])
+                result_set[1], result_set[0]])
             return Response(
                 {"response": {"error": "OK", "user": user_id, "room": room_id},
                  "status": 201}, status=status.HTTP_201_CREATED)
