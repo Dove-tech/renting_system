@@ -198,6 +198,9 @@ class SearchViewSet(viewsets.ModelViewSet):
         max_price = request.data.get('max_price')
         start_date = request.data.get('start_date')
         mean_rate = request.data.get('mean_rate')
+        bedroom_num = request.data.get('bedroom_num')
+        bathroom_num = request.data.get('bathroom_num')
+        
         query = "SELECT * FROM Apartment a WHERE "
         if name != None:
             query += "name = '{}'".format(name)
@@ -234,6 +237,8 @@ class SearchViewSet(viewsets.ModelViewSet):
             query += " and min_price = a.min_price and max_price = a.max_price"
         if mean_rate != None:
             query += " and id in (select apartment_id from Rating group by apartment_id having AVG(star) >= {})".format(mean_rate)
+        if bedroom_num != None and bathroom_num != None:
+            query += " and id in (select apartment_id from Room where bedroom_num >= {} and bathroom_num >= {})".format(bedroom_num,bathroom_num)
 
         cursor = connection.cursor()
         cursor.execute(query)

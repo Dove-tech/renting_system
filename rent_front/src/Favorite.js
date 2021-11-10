@@ -1,4 +1,4 @@
-import { Form, Input, Checkbox, Button, Modal, message } from 'antd';
+import { Form, Input, Checkbox, Button, Modal, message, List, Card, Descriptions } from 'antd';
 import React, { Component, useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -7,6 +7,8 @@ class Favorite extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            user: 1,
+            favoriteList: null,
             deleteInfo: {
                 user: '',
                 room: ''
@@ -26,6 +28,42 @@ class Favorite extends Component {
             }
         });
     }
+
+    deleteFav = (room_id) => {
+        const deleteInfo = { user: this.state.user, room: room_id };
+        axios.post('/pillow/favorite/deleteFavorite/', deleteInfo).then((res) => {
+            console.log("res", res);
+            if (res.data.response.error === 'OK') {
+                message.info("You've deleted successfully!");
+            } else {
+                message.error("This is an error message");
+            }
+        });
+    }
+
+    getFavorite = () => {
+        const user = this.state.user;
+        axios.post('/pillow/favorite/query_all_favorite', user).then(res => {
+            if (res.results) {
+                this.setState({favoriteList: res.results})
+            }
+        }).catch(e => console.log(e));
+    };
+
+    favoriteList = () => (
+        <List 
+            grid={{ gutter: 16, column: 4 }}
+            dataSource={this.state.favoriteList}
+            renderItem={item => (
+            <List.Item>
+                <Card title="Room ID">{item}</Card>
+                <Button onClick={() => {
+                    this.deleteFav(item)
+                }}>Delete</Button>
+            </List.Item>
+            )}  
+        />
+    );
 
     render() {
         return <div>
@@ -72,6 +110,7 @@ class Favorite extends Component {
                         </Button>
                     </Form.Item>
                 </Form>
+                {this.state.favoriteList && this.favoriteList()} 
         </div>;
     }
 }
