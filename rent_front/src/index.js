@@ -6,7 +6,10 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import Favorite from './Favorite';
 import Signup from './Signup';
-import Search from './Search'
+import Signin from './Signin';
+import Resetpassword from './Resetpassword';
+import Search from './Search';
+
 
 ReactDOM.render(
   <Router>
@@ -14,6 +17,8 @@ ReactDOM.render(
       {/* <Route exact path='/' component={index}></Route> */}
       <Route exact path='/search' element={<Search />} />
       <Route exact path='/signup' element={<Signup />} />
+      <Route exact path='/signin' element={<Signin />} />
+      <Route exact path='/resetpassword' element={<Resetpassword />} />
       <Route exact path='/favorite' element={<Favorite />} />
       </Routes>
   </Router>,

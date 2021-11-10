@@ -2,28 +2,22 @@ import { Form, Input, Checkbox, Button, Modal, message } from 'antd';
 import React, { useState, Component } from 'react';
 import axios from 'axios';
 
-class Signup extends Component {
+class Signin extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            signupInfo: {
-                name: '',
-                password: ''
-            }
-        }
     }
 
     onFinish = (values) => {
         console.log("values", values);
-        const signInfo = { name: values.username, password: values.password };
+        const signinInfo = { name: values.username, password: values.password };
         // this.setState({signupInfo: {name: values.username, password: values.password}}, () => {
-        console.log(signInfo);
-        axios.post('/pillow/user-signup/', signInfo).then((res) => {
+        console.log(signinInfo);
+        axios.post('/pillow/user-signin/', signinInfo).then((res) => {
             console.log("res", res);
             if (res.data.response.error === 'OK') {
-                message.info("You've signed up successfully!");
+                message.info("You've signed in successfully!");
             } else {
-                message.error("This is an error message");
+                message.error("Password is not correct");
             }
         });
         // });
@@ -66,41 +60,20 @@ class Signup extends Component {
                         <Input.Password />
                     </Form.Item>
                     <Form.Item
-                        name="confirm"
-                        label="Confirm Password"
-                        dependencies={['password']}
-                        hasFeedback
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please confirm your password!',
-                            },
-                            ({ getFieldValue }) => ({
-                                validator(_, value) {
-                                    if (!value || getFieldValue('password') === value) {
-                                        return Promise.resolve();
-                                    }
-                                    return Promise.reject(new Error('The two passwords that you entered do not match!'));
-                                },
-                            }),
-                        ]}
-                    >
-                        <Input.Password />
-                    </Form.Item>
-                    <Form.Item
                         wrapperCol={{
                             offset: 8,
                             span: 16,
                         }}
                     >
                         <Button type="primary" htmlType="submit">
-                            Sign up
+                            Sign in
                         </Button>
                     </Form.Item>
                 </Form>
+
             </>
         )
     }
 }
 
-export default Signup;
+export default Signin;
