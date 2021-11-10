@@ -16,6 +16,7 @@ class Signin extends Component {
             console.log("res", res);
             if (res.data.response.error === 'OK') {
                 message.info("You've signed in successfully!");
+                window.sessionStorage.setItem("user",res.data.response.id)
             } else {
                 message.error("Password is not correct");
             }
