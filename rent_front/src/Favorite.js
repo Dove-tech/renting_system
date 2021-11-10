@@ -1,68 +1,78 @@
+import { Form, Input, Checkbox, Button, Modal, message } from 'antd';
 import React, { Component, useState, useEffect } from 'react';
 import axios from 'axios';
 
-const userList = [
-    {
-        'id': 0,
-        'name': 'Jack Wixom',
-        'password': 'qHYgwUc@gmail.com'
-    }, {
-        'id': 1,
-        'name': 'Janet Wise',
-        'password': 'sROkowT@gmail.com'
-    }
-];
-
-const favoriteList = [
-    {
-        'user': 'a',
-        'room': 'aaaa'
-    }
-];
 
 class Favorite extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            favoriteList: favoriteList
+            deleteInfo: {
+                user: '',
+                room: ''
+            }
         }
     }
 
-    componentDidMount() {
-       this.getFavoriteList();
-    }
-
-    getFavoriteList = () => {
-        axios.get('/pillow/favorite/')
-            .then(res => {
-                this.setState({favoriteList: res.data});
-                console.log(res);
-            })
-            .catch(e => console.log(e));
-    }
-
-    addFavorite = () => {
-        const favoInfo = { user: 1, room: 4 };
-        axios.post('/pillow/favorite/', favoInfo).then(res => {
-            console.log(res);
-        }).catch(error => console.log(error.response.data));
-    }
-
-    deleteFavorite = () => {
-        
+    onFinish = (values) => {
+        console.log("values", values);
+        const deleteInfo = { user: values.user, room: values.room };
+        axios.post('/pillow/favorite/deleteFavorite/', deleteInfo).then((res) => {
+            console.log("res", res);
+            if (res.data.response.error === 'OK') {
+                message.info("You've deleted successfully!");
+            } else {
+                message.error("This is an error message");
+            }
+        });
     }
 
     render() {
         return <div>
-            <h1>Sign Up</h1>
-            <div>Favorite List</div>
-            <span>user_id room_id</span>
-            {
-                this.state.favoriteList.map(item => <div>
-                    <span>{item.user} {item.room}</span>
-                </div>)
-            }
-        </div>
+                <Form
+                    name="basic"
+                    labelCol={{ span: 8 }}
+                    wrapperCol={{ span: 16 }}
+                    initialValues={{ remember: true }}
+                    onFinish={this.onFinish}
+                    autoComplete="off"
+                >
+                    <Form.Item
+                        label="User_id"
+                        name="user"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input the user id for the record',
+                            },
+                        ]}
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        label="Room_id"
+                        name="room"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input the room id for the record!',
+                            },
+                        ]}
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        wrapperCol={{
+                            offset: 8,
+                            span: 16,
+                        }}
+                    >
+                        <Button type="primary" htmlType="submit">
+                            Delete
+                        </Button>
+                    </Form.Item>
+                </Form>
+        </div>;
     }
 }
 

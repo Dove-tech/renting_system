@@ -1,15 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { hashHistory as history } from 'react-router';
+import { BrowserRouter as Router, Routes, Switch, Route, Link } from 'react-router-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-// import Favorite from './Favorite';
+import Favorite from './Favorite';
 import Signup from './Signup';
+import Search from './Search'
 
 ReactDOM.render(
-  <React.StrictMode>
-    {/* <Favorite /> */}
-    <Signup />
-  </React.StrictMode>,
+  <Router>
+      <Routes>
+      {/* <Route exact path='/' component={index}></Route> */}
+      <Route exact path='/search' element={<Search />} />
+      <Route exact path='/signup' element={<Signup />} />
+      <Route exact path='/favorite' element={<Favorite />} />
+      </Routes>
+  </Router>,
   document.getElementById('root')
 );
 
