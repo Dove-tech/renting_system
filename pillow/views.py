@@ -241,7 +241,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                   for i, value in enumerate(row)) for row in cursor.fetchall()]
         try:
             # ret = json.dumps(r[0])
-            ret = r[0]
+            ret = r
         except:
             return Response({"response": {"error": "NONE", "message": "No search result"}, "status": 200},
                             status=status.HTTP_200_OK)
