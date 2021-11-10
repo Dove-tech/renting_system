@@ -240,14 +240,15 @@ class SearchViewSet(viewsets.ModelViewSet):
         r = [dict((cursor.description[i][0], str(value))
                   for i, value in enumerate(row)) for row in cursor.fetchall()]
         try:
-            ret = json.dumps(r[0])
+            # ret = json.dumps(r[0])
+            ret = r[0]
         except:
-            return Response({"response": {"error": "No search result"}, "status": 400},
-                            status=status.HTTP_400_BAD_REQUEST)
+            return Response({"response": {"error": "NONE", "message": "No search result"}, "status": 200},
+                            status=status.HTTP_200_OK)
         else:
             return Response(
                 {"response": {"error": "OK", "results": ret},
-                    "status": 201}, status=status.HTTP_201_CREATED)
+                    "status": 200}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['POST'])
     def addToFavorite(self, request):
