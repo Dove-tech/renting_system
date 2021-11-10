@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from django.db import connection, transaction
 from itertools import chain
 from django.db.models import Q
+from rest_framework.decorators import action
 
 
 def executeSQL(sql):
@@ -101,6 +102,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         return queryset
 
     def create(self, request):
+        print("requst:   ", request.data)
         name = request.data.get('name')
         gym = request.data.get('gym')
         parking = request.data.get('parking')
@@ -138,6 +140,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             {"response": {"error": "OK", "results": results},
              "status": 201}, status=status.HTTP_201_CREATED)
 
+    @action(detail = False,methods = ['POST'])
     def addToFavorite(self, request):
         user_id = request.data.get('user', None)
         room_id = request.data.get('room', None)
@@ -152,11 +155,7 @@ class SearchViewSet(viewsets.ModelViewSet):
             instance_user = User(id=user_set[0], name=user_set[1], password=user_set[2])
             cursor.execute('SELECT * FROM Room WHERE id = %s', [room_id])
             room_set = cursor.fetchone()
-            instance_room = Room(id=room_set[0], apartment_id=room_set[1], bedroom_num=room_set[2],
-                                 bathroom_num=room_set[3], price=room_set[4], start_time=room_set[5],
-                                 end_time=room_set[6], description=room_set[7])
-            instance = Favorite(user=instance_user, room=instance_room)
-            instance.save()
+            cursor.execute('INSERT INTO Favorite VALUE(%s, %s)',[user_id, room_id])
             return Response(
                 {"response": {"error": "OK", "user": user_set[0], "room": room_set[0]},
                  "status": 201}, status=status.HTTP_201_CREATED)
@@ -164,17 +163,6 @@ class SearchViewSet(viewsets.ModelViewSet):
         else:
             return Response({"response": {"error": "You have added this room to Favorite"}, "status": 400},
                             status=status.HTTP_400_BAD_REQUEST)
-
-
-# class addToFavoriteViewSet(viewsets.ModelViewSet):
-#     serializer_class = FavoriteSerializer
-#
-#     # serializer_class_user = UserSerializer
-#
-#     # override get_queryset or create queryset
-#     def get_queryset(self):
-#         queryset = Favorite.objects.all()
-#         return queryset
 
 
 
@@ -185,9 +173,11 @@ class FavoriteViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = 1
         allFavotite = Favorite.objects.filter(user=user).all()
+        print(allFavotite)
         return allFavotite
 
     def deleteFavorite(self, request):
+        print(request)
         user_id = request.data.get('user', None)
         room_id = request.data.get('room', None)
         cursor = connection.cursor()
