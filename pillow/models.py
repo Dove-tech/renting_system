@@ -13,17 +13,21 @@ class Apartment(models.Model):
     name = models.CharField(max_length=30, blank=True, null=True)
     location = models.CharField(max_length=255, blank=True, null=True)
     address = models.CharField(max_length=255, blank=True, null=True)
-    landlord_id = models.IntegerField(blank=True, null=True)
+    landlord = models.ForeignKey('Landlord', models.DO_NOTHING, blank=True, null=True)
     gym = models.IntegerField(blank=True, null=True)
     parking = models.IntegerField(blank=True, null=True)
     utility = models.IntegerField(blank=True, null=True)
     laundry = models.IntegerField(blank=True, null=True)
     swimming_pool = models.IntegerField(blank=True, null=True)
     description = models.CharField(max_length=255, blank=True, null=True)
+    min_price = models.IntegerField(blank=True, null=True)
+    max_price = models.IntegerField(blank=True, null=True)
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'Apartment'
+        db_table = 'apartment'
 
 
 class Favorite(models.Model):
@@ -32,7 +36,7 @@ class Favorite(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'Favorite'
+        db_table = 'favorite'
         unique_together = (('user', 'room'),)
 
 
@@ -44,19 +48,19 @@ class Landlord(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'Landlord'
+        db_table = 'landlord'
 
 
 class Photo(models.Model):
     photo_id = models.IntegerField(primary_key=True)
     come_from = models.IntegerField(blank=True, null=True)
     photo_link = models.CharField(max_length=255, blank=True, null=True)
-    property_apartment_id = models.IntegerField(blank=True, null=True)
-    property_room_id = models.IntegerField(blank=True, null=True)
+    property_apartment = models.ForeignKey(Apartment, models.DO_NOTHING, blank=True, null=True)
+    property_room = models.ForeignKey('Room', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'Photo'
+        db_table = 'photo'
 
 
 class Rating(models.Model):
@@ -66,13 +70,13 @@ class Rating(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'Rating'
+        db_table = 'rating'
         unique_together = (('user', 'apartment'),)
 
 
 class Room(models.Model):
     id = models.IntegerField(primary_key=True)
-    apartment_id = models.IntegerField(blank=True, null=True)
+    apartment = models.ForeignKey(Apartment, models.DO_NOTHING, blank=True, null=True)
     bedroom_num = models.IntegerField(blank=True, null=True)
     bathroom_num = models.IntegerField(blank=True, null=True)
     price = models.FloatField(blank=True, null=True)
@@ -82,7 +86,7 @@ class Room(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'Room'
+        db_table = 'room'
 
 
 class User(models.Model):
@@ -92,118 +96,4 @@ class User(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'User'
-
-
-class AuthGroup(models.Model):
-    name = models.CharField(unique=True, max_length=150)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_group'
-
-
-class AuthGroupPermissions(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
-    permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_group_permissions'
-        unique_together = (('group', 'permission'),)
-
-
-class AuthPermission(models.Model):
-    name = models.CharField(max_length=255)
-    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING)
-    codename = models.CharField(max_length=100)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_permission'
-        unique_together = (('content_type', 'codename'),)
-
-
-class AuthUser(models.Model):
-    password = models.CharField(max_length=128)
-    last_login = models.DateTimeField(blank=True, null=True)
-    is_superuser = models.IntegerField()
-    username = models.CharField(unique=True, max_length=150)
-    first_name = models.CharField(max_length=150)
-    last_name = models.CharField(max_length=150)
-    email = models.CharField(max_length=254)
-    is_staff = models.IntegerField()
-    is_active = models.IntegerField()
-    date_joined = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'auth_user'
-
-
-class AuthUserGroups(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
-    group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_user_groups'
-        unique_together = (('user', 'group'),)
-
-
-class AuthUserUserPermissions(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
-    permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'auth_user_user_permissions'
-        unique_together = (('user', 'permission'),)
-
-
-class DjangoAdminLog(models.Model):
-    action_time = models.DateTimeField()
-    object_id = models.TextField(blank=True, null=True)
-    object_repr = models.CharField(max_length=200)
-    action_flag = models.PositiveSmallIntegerField()
-    change_message = models.TextField()
-    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING, blank=True, null=True)
-    user = models.ForeignKey(AuthUser, models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'django_admin_log'
-
-
-class DjangoContentType(models.Model):
-    app_label = models.CharField(max_length=100)
-    model = models.CharField(max_length=100)
-
-    class Meta:
-        managed = False
-        db_table = 'django_content_type'
-        unique_together = (('app_label', 'model'),)
-
-
-class DjangoMigrations(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    app = models.CharField(max_length=255)
-    name = models.CharField(max_length=255)
-    applied = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'django_migrations'
-
-
-class DjangoSession(models.Model):
-    session_key = models.CharField(primary_key=True, max_length=40)
-    session_data = models.TextField()
-    expire_date = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'django_session'
+        db_table = 'user'
