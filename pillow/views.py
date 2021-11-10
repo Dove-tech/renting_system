@@ -12,6 +12,8 @@ from django.db import connection, transaction
 from itertools import chain
 from django.db.models import Q
 
+import json
+
 
 def executeSQL(sql):
     with connection.cursor() as cursor:
@@ -145,13 +147,14 @@ class SearchViewSet(viewsets.ModelViewSet):
             query += " and min_price > {} and max_price < {}".format(min_price, max_price)
 
         cursor = connection.cursor()
-        print("query is %s", query)
-        # cursor.execute('SELECT * FROM Apartment a WHERE a.gym = case when %s = -1 then a.gym else %s end and a.parking = case when %s = -1 then a.parking else %s end',[gym, gym, parking, parking])
         cursor.execute(query)
-        results = cursor.fetchall()
+        r = [dict((cursor.description[i][0], str(value)) \
+               for i, value in enumerate(row)) for row in cursor.fetchall()]
+
+        ret = json.dumps(r[0])
         return Response(
-            {"response": {"error": "OK", "results": results},
-             "status": 201}, status=status.HTTP_201_CREATED)
+                {"response": {"error": "OK", "results": ret},
+                 "status": 201}, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['POST'])
     def addToFavorite(self, request):

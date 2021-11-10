@@ -41,6 +41,19 @@ class Signup extends Component {
             .catch(e => console.log(e));
     }
 
+    addFavorite = () => {
+        // const favoInfo = { user: 1, room: 4 };
+        // JSON.stringify();
+        // axios.post('/pillow/favorite/', favoInfo).then(res => {
+        //     console.log(res);
+        // }).catch(error => console.log(error.response.data));
+
+        const name = 'a';
+        axios.post('/pillow/search/', name).then(res => {
+            console.log(res);
+        }).catch(error => console.log(error.response.data));
+    }
+
     render() {
         return <div>
             <h1>Sign Up</h1>
