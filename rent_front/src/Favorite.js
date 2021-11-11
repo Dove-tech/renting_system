@@ -7,8 +7,7 @@ class Favorite extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            session_id,
-            user: 1,
+            user: 3,
             favoriteList: null,
             deleteInfo: {
                 user: '',
@@ -18,22 +17,34 @@ class Favorite extends Component {
     }
 
     componentDidMount() {
-        this.setState({ session_id:window.sessionStorage.getItem("user")  }, () => {
-            console.log("state", this.state.session_id);
+        this.setState({ user: window.localStorage.getItem("user")  }, () => {
+            console.log("state", this.state.user);
         });
+        this.getFavorite();
     }
-    onFinish = (values) => {
-        console.log("values", values);
-        const deleteInfo = { user: values.user, room: values.room };
-        axios.post('/pillow/favorite/deleteFavorite/', deleteInfo).then((res) => {
-            console.log("res", res);
-            if (res.data.response.error === 'OK') {
-                message.info("You've deleted successfully!");
-            } else {
-                message.error("This is an error message");
+
+    // onFinish = (values) => {
+    //     console.log("values", values);
+    //     const deleteInfo = { user: values.user, room: values.room };
+    //     axios.post('/pillow/favorite/deleteFavorite/', deleteInfo).then((res) => {
+    //         console.log("res", res);
+    //         if (res.data.response.error === 'OK') {
+    //             message.info("You've deleted successfully!");
+    //         } else {
+    //             message.error("This is an error message");
+    //         }
+    //     });
+    // }
+
+    getFavorite = () => {
+        const request = {user: this.state.user};
+        axios.post('/pillow/favorite/query_all_favorite/', request).then(res => {
+            console.log(res);
+            if (res?.data?.response?.results) {
+                this.setState({favoriteList: res?.data?.response?.results})
             }
-        });
-    }
+        }).catch(e => console.log(e));
+    };
 
     deleteFav = (room_id) => {
         const deleteInfo = { user: this.state.user, room: room_id };
@@ -41,20 +52,12 @@ class Favorite extends Component {
             console.log("res", res);
             if (res.data.response.error === 'OK') {
                 message.info("You've deleted successfully!");
+                this.getFavorite();
             } else {
                 message.error("This is an error message");
             }
         });
     }
-
-    getFavorite = () => {
-        const user = this.state.user;
-        axios.post('/pillow/favorite/query_all_favorite', user).then(res => {
-            if (res.results) {
-                this.setState({favoriteList: res.results})
-            }
-        }).catch(e => console.log(e));
-    };
 
     favoriteList = () => (
         <List 
@@ -73,7 +76,7 @@ class Favorite extends Component {
 
     render() {
         return <div>
-                <Form
+                {/* <Form
                     name="basic"
                     labelCol={{ span: 8 }}
                     wrapperCol={{ span: 16 }}
@@ -115,7 +118,7 @@ class Favorite extends Component {
                             Delete
                         </Button>
                     </Form.Item>
-                </Form>
+                </Form> */}
                 {this.state.favoriteList && this.favoriteList()} 
         </div>;
     }
