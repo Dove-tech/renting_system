@@ -96,7 +96,7 @@ class Search extends Component {
     </CheckboxGroup>);
 
     onFinish = (value) => {
-        const { min_price, max_price, mean_rate, utility } = value;
+        const { min_price, max_price, mean_rate, utility, bedroom_num, bathroom_num } = value;
         const request = { min_price, max_price, mean_rate };
         if (value.name && value.name !== " ") {
             request.name = value.name;
@@ -122,6 +122,12 @@ class Search extends Component {
         }
         if (mean_rate) {
             request.mean_rate = mean_rate;
+        }
+        if (bedroom_num) {
+            request.bedroom_num = bedroom_num;
+        }
+        if (bathroom_num) {
+            request.bathroom_num = bathroom_num;
         }
         console.log("request value", request);
         this.search(request);
@@ -151,6 +157,12 @@ class Search extends Component {
             </Form.Item>
             <Form.Item name="mean_rate" label="Min Rate">
                 <InputNumber min={0} max={5} step={0.5}></InputNumber>
+            </Form.Item>
+            <Form.Item name="bedroom_num" label="Min Bedroom Num">
+                <InputNumber min={0} max={4} step={1}></InputNumber>
+            </Form.Item>
+            <Form.Item name="bathroom_num" label="Min Bathroom Num">
+                <InputNumber min={0} max={4} step={1}></InputNumber>
             </Form.Item>
             <Form.Item>
                 <Button type="primary" htmlType="submit">

@@ -15,7 +15,7 @@ import Main from './Main';
 ReactDOM.render(
   <Router>
       <Routes>
-      <Route exact path='/' element={<Main />}></Route>
+      <Route exact path='/' component={<Main />}></Route>
       <Route exact path='/search' element={<Search />} />
       <Route exact path='/signup' element={<Signup />} />
       <Route exact path='/signin' element={<Signin />} />
