@@ -16,6 +16,10 @@ class Favorite extends Component {
         }
     }
 
+    componentDidMount() {
+        this.getFavorite();
+    }
+
     onFinish = (values) => {
         console.log("values", values);
         const deleteInfo = { user: values.user, room: values.room };
@@ -35,6 +39,7 @@ class Favorite extends Component {
             console.log("res", res);
             if (res.data.response.error === 'OK') {
                 message.info("You've deleted successfully!");
+                this.getFavorite();
             } else {
                 message.error("This is an error message");
             }
@@ -42,10 +47,11 @@ class Favorite extends Component {
     }
 
     getFavorite = () => {
-        const user = this.state.user;
-        axios.post('/pillow/favorite/query_all_favorite', user).then(res => {
-            if (res.results) {
-                this.setState({favoriteList: res.results})
+        const request = {user: this.state.user};
+        axios.post('/pillow/favorite/query_all_favorite/', request).then(res => {
+            console.log(res);
+            if (res?.data?.response?.results) {
+                this.setState({favoriteList: res?.data?.response?.results})
             }
         }).catch(e => console.log(e));
     };
@@ -67,7 +73,7 @@ class Favorite extends Component {
 
     render() {
         return <div>
-                <Form
+                {/* <Form
                     name="basic"
                     labelCol={{ span: 8 }}
                     wrapperCol={{ span: 16 }}
@@ -109,7 +115,7 @@ class Favorite extends Component {
                             Delete
                         </Button>
                     </Form.Item>
-                </Form>
+                </Form> */}
                 {this.state.favoriteList && this.favoriteList()} 
         </div>;
     }
