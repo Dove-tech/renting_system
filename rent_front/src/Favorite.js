@@ -7,6 +7,7 @@ class Favorite extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            session_id,
             user: 1,
             favoriteList: null,
             deleteInfo: {
@@ -17,9 +18,10 @@ class Favorite extends Component {
     }
 
     componentDidMount() {
-        this.getFavorite();
+        this.setState({ session_id:window.sessionStorage.getItem("user")  }, () => {
+            console.log("state", this.state.session_id);
+        });
     }
-
     onFinish = (values) => {
         console.log("values", values);
         const deleteInfo = { user: values.user, room: values.room };
