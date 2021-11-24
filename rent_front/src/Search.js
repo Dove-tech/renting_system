@@ -15,16 +15,16 @@ class Search extends Component {
     }
 
     // Checkbox onchange
-    onChange = (checkedValue) => {
-        let new_search_value = {};
-        checkedValue.forEach(val => {
-            new_search_value[val] = true
-        });
-        console.log(new_search_value);
-        this.setState({ search_value: new_search_value }, () => {
-            console.log("state", this.state.search_value);
-        });
-    }
+    // onChange = (checkedValue) => {
+    //     let new_search_value = this.state.search_value;
+    //     checkedValue.forEach(val => {
+    //         new_search_value[val] = true
+    //     });
+    //     console.log(new_search_value);
+    //     this.setState({ search_value: new_search_value }, () => {
+    //         console.log("state", this.state.search_value);
+    //     });
+    // }
 
     search = (searchValue) => {
         // const searchValue = JSON.stringify(this.state.search_value);
@@ -95,6 +95,15 @@ class Search extends Component {
         </Row>
     </CheckboxGroup>);
 
+    RoomCheckboxGroup = ({ onChange }) => (<CheckboxGroup style={{ width: '40%' }} onChange={onChange}>
+        <Row>
+            <Col span={8}><Checkbox value="1">1</Checkbox></Col>
+            <Col span={8}><Checkbox value="2">2</Checkbox></Col>
+            <Col span={8}><Checkbox value="3">3</Checkbox></Col>
+            <Col span={8}><Checkbox value="4">4</Checkbox></Col>
+        </Row>
+    </CheckboxGroup>)
+
     onFinish = (value) => {
         const { min_price, max_price, mean_rate, utility, bedroom_num, bathroom_num } = value;
         const request = { min_price, max_price, mean_rate };
@@ -159,10 +168,12 @@ class Search extends Component {
                 <InputNumber min={0} max={5} step={0.5}></InputNumber>
             </Form.Item>
             <Form.Item name="bedroom_num" label="Min Bedroom Num">
-                <InputNumber min={0} max={4} step={1}></InputNumber>
+                {/* <InputNumber min={0} max={4} step={1}></InputNumber> */}
+                <this.RoomCheckboxGroup />
             </Form.Item>
             <Form.Item name="bathroom_num" label="Min Bathroom Num">
-                <InputNumber min={0} max={4} step={1}></InputNumber>
+                {/* <InputNumber min={0} max={4} step={1}></InputNumber> */}
+                <this.RoomCheckboxGroup />
             </Form.Item>
             <Form.Item>
                 <Button type="primary" htmlType="submit">

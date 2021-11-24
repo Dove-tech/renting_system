@@ -1,1 +1,2 @@
-rent_front/node_modules
+rent_front/node_modules/
+*.pyc
