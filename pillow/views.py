@@ -238,15 +238,15 @@ class SearchViewSet(viewsets.ModelViewSet):
             query += " and min_price = a.min_price and max_price = a.max_price"
 
         if bedroom_num != None:
-            query += " and rm.bedroom in ("
+            query += " and rm.bedroom_num in ("
             for i in bedroom_num:
-                query += str(i);
+                query += str(i)
                 query += ","
             query = query[0:-1]
             query += ")"
 
         if bathroom_num != None:
-            query += " and rm.bathroom in ("
+            query += " and rm.bathroom_num in ("
             for i in bathroom_num:
                 query += str(i)
                 query += ","
