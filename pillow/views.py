@@ -202,7 +202,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         bedroom_num = request.data.get('bedroom_num')
         bathroom_num = request.data.get('bathroom_num')
         
-        query = "SELECT * FROM Apartment a WHERE "
+        query = "SELECT * FROM Apartment a JOIN Room rm on a.id = rm.apartment_id WHERE "
         if name != None:
             query += "name = '{}'".format(name)
         else:
@@ -236,17 +236,32 @@ class SearchViewSet(viewsets.ModelViewSet):
                 min_price, max_price)
         else:
             query += " and min_price = a.min_price and max_price = a.max_price"
+
+        if bedroom_num != None:
+            query += " and rm.bedroom in ("
+            for i in bedroom_num:
+                query += str(i);
+                query += ","
+            query = query[0:-1]
+            query += ")"
+
+        if bathroom_num != None:
+            query += " and rm.bathroom in ("
+            for i in bathroom_num:
+                query += str(i)
+                query += ","
+            query = query[0:-1]
+            query += ")"
+
         if mean_rate != None:
             query += " and id in (select apartment_id from Rating group by apartment_id having AVG(star) >= {})".format(mean_rate)
-        if bedroom_num != None and bathroom_num != None:
-            query += " and id in (select apartment_id from Room where bedroom_num >= {} and bathroom_num >= {})".format(bedroom_num,bathroom_num)
+        
 
         cursor = connection.cursor()
         cursor.execute(query)
         r = [dict((cursor.description[i][0], str(value))
                   for i, value in enumerate(row)) for row in cursor.fetchall()]
         try:
-            # ret = json.dumps(r[0])
             ret = r
         except:
             return Response({"response": {"error": "NONE", "message": "No search result"}, "status": 200},
