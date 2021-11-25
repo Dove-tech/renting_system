@@ -15,21 +15,21 @@ class Search extends Component {
     }
 
     // Checkbox onchange
-    // onChange = (checkedValue) => {
-    //     let new_search_value = this.state.search_value;
-    //     checkedValue.forEach(val => {
-    //         new_search_value[val] = true
-    //     });
-    //     console.log(new_search_value);
-    //     this.setState({ search_value: new_search_value }, () => {
-    //         console.log("state", this.state.search_value);
-    //     });
-    // }
+    onChange = (checkedValue) => {
+        // let new_search_value = this.state.search_value;
+        // checkedValue.forEach(val => {
+        //     new_search_value[val] = true
+        // });
+        console.log(checkedValue);
+        // this.setState({ search_value: new_search_value }, () => {
+        //     console.log("state", this.state.search_value);
+        // });
+    }
 
     search = (searchValue) => {
         // const searchValue = JSON.stringify(this.state.search_value);
         axios.post('/pillow/search/adv_search/', searchValue).then(res => {
-            console.log(res.data.response.results);
+            console.log("result", res.data.response.results);
             if (res?.data?.response?.error === "NONE") {
                 message.error("No result found!");
             }
@@ -95,6 +95,14 @@ class Search extends Component {
         </Row>
     </CheckboxGroup>);
 
+    UtilityCheckboxGroup = ({ onChange }) => (<CheckboxGroup style={{ width: '40%' }} onChange={onChange}>
+        <Row>
+            <Col span={10}><Checkbox value="1">water</Checkbox></Col>
+            <Col span={10}><Checkbox value="2">electricity</Checkbox></Col>
+            <Col span={10}><Checkbox value="3">network</Checkbox></Col>
+        </Row>
+    </CheckboxGroup>);
+
     RoomCheckboxGroup = ({ onChange }) => (<CheckboxGroup style={{ width: '40%' }} onChange={onChange}>
         <Row>
             <Col span={8}><Checkbox value="1">1</Checkbox></Col>
@@ -120,8 +128,8 @@ class Search extends Component {
             const standard = value.start_date.format("YYYY-MM-DD");
             request.start_date = standard;
         }
-        if (value.utility) {
-            request.utility = utility;
+        if (utility) {
+            request.utility = utility.reduce((a, b) => parseInt(a) + parseInt(b));
         }
         if (min_price) {
             request.min_price = min_price;
@@ -152,8 +160,9 @@ class Search extends Component {
             <Form.Item name="fourcheckbox">
                 <this.FourCheckboxGroup onChange={this.onChange} />
             </Form.Item>
-            <Form.Item name="utility" label="Utility(0-6)">
-                <InputNumber min={0} max={6}></InputNumber>
+            <Form.Item name="utility" label="Utility (Rental Includes)">
+                {/* <InputNumber min={0} max={6}></InputNumber> */}
+                <this.UtilityCheckboxGroup onChange={this.onChange}/>
             </Form.Item>
             <Form.Item name="min_price" label="Min Price">
                 <InputNumber min={500} max={1000}></InputNumber>
@@ -167,11 +176,11 @@ class Search extends Component {
             <Form.Item name="mean_rate" label="Min Rate">
                 <InputNumber min={0} max={5} step={0.5}></InputNumber>
             </Form.Item>
-            <Form.Item name="bedroom_num" label="Min Bedroom Num">
+            <Form.Item name="bedroom_num" label="Bedroom Num">
                 {/* <InputNumber min={0} max={4} step={1}></InputNumber> */}
                 <this.RoomCheckboxGroup />
             </Form.Item>
-            <Form.Item name="bathroom_num" label="Min Bathroom Num">
+            <Form.Item name="bathroom_num" label="Bathroom Num">
                 {/* <InputNumber min={0} max={4} step={1}></InputNumber> */}
                 <this.RoomCheckboxGroup />
             </Form.Item>
@@ -182,6 +191,7 @@ class Search extends Component {
             </Form.Item>
         </Form>
     );
+
     render() {
         return (<div><h1>Search</h1>
             < this.form />
