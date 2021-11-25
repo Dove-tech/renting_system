@@ -257,7 +257,6 @@ class SearchViewSet(viewsets.ModelViewSet):
         if mean_rate != None:
             query += " and id in (select apartment_id from Rating group by apartment_id having AVG(star) >= {})".format(mean_rate)
         
-        print(query)
         cursor = connection.cursor()
         cursor.execute(query)
         r = [dict((cursor.description[i][0], str(value))
@@ -274,11 +273,11 @@ class SearchViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def fetchDetails(self, request):
-        apartment_id = request.data.get('apartment_id',None)
-        
-        query = "select * from Apartment a JOIN room rm on a.id = rm.apartment_id where a.id = {}".format(apartment_id)
+        apartment_id = request.data.get('id',None)
+        query = "select * from Apartment a JOIN room rm on a.id = rm.apartment_id JOIN photo on photo.property_room_id = rm.id JOIN landlord on a.landlord_id = Landlord.id where a.id = {}".format(apartment_id)
         cursor = connection.cursor()
         cursor.execute(query)
+        print(query)
         r = [dict((cursor.description[i][0], str(value))
                   for i, value in enumerate(row)) for row in cursor.fetchall()]
         try:
