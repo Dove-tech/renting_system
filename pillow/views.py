@@ -1,6 +1,6 @@
 from django.http.response import JsonResponse
 from django.shortcuts import render
-
+from django.db import transaction, IntegrityError
 # Create your views here.
 from django.http import HttpResponse
 
@@ -187,6 +187,7 @@ class SearchViewSet(viewsets.ModelViewSet):
                 {"response": {"error": "OK", "results": ret},
                  "status": 201}, status=status.HTTP_201_CREATED)
 
+    @transaction.atomic
     @action(detail=False, methods=['POST'])
     def adv_search(self, request):
         name = request.data.get('name')
@@ -202,7 +203,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         bedroom_num = request.data.get('bedroom_num')
         bathroom_num = request.data.get('bathroom_num')
         
-        query = "SELECT * FROM Apartment a JOIN Room rm on a.id = rm.apartment_id WHERE "
+        query = "SELECT * FROM Apartment a JOIN Room rm on a.id = rm.apartment_id JOIN photo on photo.property_apartment_id = a.id WHERE "
         if name != None:
             query += "name = '{}'".format(name)
         else:
@@ -256,7 +257,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         if mean_rate != None:
             query += " and id in (select apartment_id from Rating group by apartment_id having AVG(star) >= {})".format(mean_rate)
         
-
+        print(query)
         cursor = connection.cursor()
         cursor.execute(query)
         r = [dict((cursor.description[i][0], str(value))
@@ -270,6 +271,8 @@ class SearchViewSet(viewsets.ModelViewSet):
             return Response(
                 {"response": {"error": "OK", "results": ret},
                  "status": 200}, status=status.HTTP_200_OK)
+
+
 
     @action(detail=False, methods=['POST'])
     def addToFavorite(self, request):
