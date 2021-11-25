@@ -257,7 +257,6 @@ class SearchViewSet(viewsets.ModelViewSet):
         if mean_rate != None:
             query += " and id in (select apartment_id from Rating group by apartment_id having AVG(star) >= {})".format(mean_rate)
         
-        print(query)
         cursor = connection.cursor()
         cursor.execute(query)
         r = [dict((cursor.description[i][0], str(value))
@@ -274,11 +273,11 @@ class SearchViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def fetchDetails(self, request):
-        apartment_id = request.data.get('apartment_id',None)
-        
-        query = "select * from Apartment a JOIN room rm on a.id = rm.apartment_id where a.id = {}".format(apartment_id)
+        apartment_id = request.data.get('id',None)
+        query = "select * from Apartment a JOIN room rm on a.id = rm.apartment_id JOIN photo on photo.property_room_id = rm.id JOIN landlord on a.landlord_id = Landlord.id where a.id = {}".format(apartment_id)
         cursor = connection.cursor()
         cursor.execute(query)
+        print(query)
         r = [dict((cursor.description[i][0], str(value))
                   for i, value in enumerate(row)) for row in cursor.fetchall()]
         try:
@@ -359,3 +358,58 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         else:
             return Response({"response": {"error": "This room is not in favorite list"}, "status": 400},
                             status=status.HTTP_400_BAD_REQUEST)
+
+
+class CompareViewSet(viewsets.ModelViewSet):
+    serializer_class = ApartmentSerializer
+
+    @action(detail=False, methods=['POST'])
+    def show_compare_result(self, request):
+        print("request:{}".format(request))
+        apartment_left_id = request.data.get('left_id', None)
+        apartment_right_id = request.data.get('right_id', None)
+        cursor = connection.cursor()
+        # print('SELECT * FROM apartment ap JOIN rating ra ON ap.id = ra.apartment_id JOIN photo ph ON ph.property_apartment_id = ap.id WHERE id = {}'.format(apartment_left_id))
+        cursor.execute(
+            'SELECT ap.id, ap.name, ap.location, ap.min_price, ap.max_price, AVG(ra.star) as star, ph.photo_id, '
+            'ph.photo_link FROM apartment ap JOIN rating ra ON ap.id = ra.apartment_id JOIN photo ph ON '
+            'ph.property_apartment_id = ap.id WHERE id = %s GROUP BY ap.id', [apartment_left_id])
+        info_left = [dict((cursor.description[i][0], str(value))
+                          for i, value in enumerate(row)) for row in cursor.fetchall()]
+
+        cursor.execute(
+            'SELECT ap.id, ap.name, ap.location, ap.min_price, ap.max_price, AVG(ra.star) as star, ph.photo_id, '
+            'ph.photo_link FROM apartment ap JOIN rating ra ON ap.id = ra.apartment_id JOIN photo ph ON '
+            'ph.property_apartment_id = ap.id WHERE id = %s GROUP BY ap.id', [apartment_right_id])
+        info_right = [dict((cursor.description[i][0], str(value))
+                           for i, value in enumerate(row)) for row in cursor.fetchall()]
+
+        # cursor.execute(
+        #     'SELECT AVG(star) FROM rating WHERE apartment_id = %s', [apartment_left_id])
+        # rating_info_left = cursor.fetchone()
+        # cursor.execute(
+        #     'SELECT photo_link FROM photo WHERE property_apartment_id = %s', [apartment_left_id])
+        # photo_info_left = cursor.fetchall()
+        # print("basic_info_left:".format(info_left))
+        #
+        # cursor.execute(
+        #     'SELECT * FROM apartment WHERE id = %s', [apartment_right_id])
+        # basic_info_right = cursor.fetchone()
+        # cursor.execute(
+        #     'SELECT AVG(star) FROM rating WHERE apartment_id = %s', [apartment_right_id])
+        # rating_info_right = cursor.fetchone()
+        # cursor.execute(
+        #     'SELECT photo_link FROM photo WHERE property_apartment_id = %s', [apartment_right_id])
+        # photo_info_right = cursor.fetchall()
+        # dic_left = [{apartment_left_id: str(basic_info_left) + str(rating_info_left) + str(photo_info_left)}]
+        # print("dic_left:{}".format(dic_left))
+        # dic_right = [{apartment_right_id: str(basic_info_right) + str(rating_info_right) + str(photo_info_right)}]
+        # print("dic_right:{}".format(dic_right))
+        # result = dic_left + dic_right
+        # print("result:{}".format(result))
+        # # 11位是minPrice，12位是maxPrice，
+        # print("minprice:{}".format(result[0][9][0]))
+
+        return Response(
+            {"response": {"error": "OK", "info_left": info_left, "info_right": info_right},
+             "status": 201}, status=status.HTTP_201_CREATED)
