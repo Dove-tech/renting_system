@@ -205,7 +205,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         
         query = "SELECT * FROM Apartment a JOIN Room rm on a.id = rm.apartment_id JOIN photo on photo.property_apartment_id = a.id WHERE "
         if name != None:
-            query += "name = '{}'".format(name)
+            query += "name like '%{}%'".format(name)
         else:
             query += "name = a.name"
         if gym != None:
@@ -272,7 +272,24 @@ class SearchViewSet(viewsets.ModelViewSet):
                 {"response": {"error": "OK", "results": ret},
                  "status": 200}, status=status.HTTP_200_OK)
 
-
+    @action(detail=False, methods=['POST'])
+    def fetchDetails(self, request):
+        apartment_id = request.data.get('apartment_id',None)
+        
+        query = "select * from Apartment a JOIN room rm on a.id = rm.apartment_id where a.id = {}".format(apartment_id)
+        cursor = connection.cursor()
+        cursor.execute(query)
+        r = [dict((cursor.description[i][0], str(value))
+                  for i, value in enumerate(row)) for row in cursor.fetchall()]
+        try:
+            ret = r
+        except:
+            return Response({"response": {"error": "NONE", "message": "Something must be wrong"}, "status": 200},
+                            status=status.HTTP_200_OK)
+        else:
+            return Response(
+                {"response": {"error": "OK", "results": ret},
+                 "status": 200}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['POST'])
     def addToFavorite(self, request):
