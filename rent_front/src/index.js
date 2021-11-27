@@ -10,6 +10,7 @@ import Signin from './Signin';
 import Resetpassword from './Resetpassword';
 import Search from './Search';
 import Main from './Main';
+import Compare from './Compare';
 
 
 ReactDOM.render(
@@ -21,6 +22,7 @@ ReactDOM.render(
       <Route exact path='/signin' element={<Signin />} />
       <Route exact path='/resetpassword' element={<Resetpassword />} />
       <Route exact path='/favorite' element={<Favorite />} />
+      <Route exact path='/compare' element={<Compare />} />
       </Routes>
   </Router>,
   document.getElementById('root')
