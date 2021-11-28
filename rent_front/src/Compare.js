@@ -10,6 +10,7 @@ class Nested extends Component {
     constructor(props) {
         super(props);
     }
+
     info_apartment = () => {
         const info = this.props.data;
         return (<List
@@ -34,8 +35,8 @@ class Nested extends Component {
                 </List.Item>)}
             >
         </List>);
-
     }
+    
     render() {
         return (<div>
             {<this.info_apartment />}
@@ -77,48 +78,48 @@ export default class Compare extends Component {
     }
 
     // the whole search form
-//    form = () => (
-//        <Form name="search_form" onFinish={this.onFinish}>
-//            <Form.Item name="name">
-//                <Input onChange={(e) => { console.log("input1", e.target.value) }}
-//                    placeholder="Please input the apartment name you want to explore" />
-//            </Form.Item>
-//            <Form.Item name="fourcheckbox">
-//                <this.FourCheckboxGroup onChange={this.onChange} />
-//            </Form.Item>
-//            <Form.Item name="utility" label="Utility(0-6)">
-//                <InputNumber min={0} max={6}></InputNumber>
-//            </Form.Item>
-//            <Form.Item name="min_price" label="Min Price">
-//                <InputNumber min={500} max={1000}></InputNumber>
-//            </Form.Item>
-//            <Form.Item name="max_price" label="Max Price">
-//                <InputNumber min={500} max={1000}></InputNumber>
-//            </Form.Item>
-//            <Form.Item name="start_date" label="Start Date">
-//                <DatePicker></DatePicker>
-//            </Form.Item>
-//            <Form.Item name="mean_rate" label="Min Rate">
-//                <InputNumber min={0} max={5} step={0.5}></InputNumber>
-//            </Form.Item>
-//            <Form.Item name="bedroom_num" label="Min Bedroom Num">
-//                {/* <InputNumber min={0} max={4} step={1}></InputNumber> */}
-//                <this.RoomCheckboxGroup />
-//            </Form.Item>
-//            <Form.Item name="bathroom_num" label="Min Bathroom Num">
-//                {/* <InputNumber min={0} max={4} step={1}></InputNumber> */}
-//                <this.RoomCheckboxGroup />
-//            </Form.Item>
-//            <Form.Item>
-//                <Button type="primary" htmlType="submit">
-//                    Search
-//                </Button>
-//            </Form.Item>
-//        </Form>
-//    );
+    // form = () => (
+    //    <Form name="search_form" onFinish={this.onFinish}>
+    //        <Form.Item name="name">
+    //            <Input onChange={(e) => { console.log("input1", e.target.value) }}
+    //                placeholder="Please input the apartment name you want to explore" />
+    //        </Form.Item>
+    //        <Form.Item name="fourcheckbox">
+    //            <this.FourCheckboxGroup onChange={this.onChange} />
+    //        </Form.Item>
+    //        <Form.Item name="utility" label="Utility(0-6)">
+    //            <InputNumber min={0} max={6}></InputNumber>
+    //        </Form.Item>
+    //        <Form.Item name="min_price" label="Min Price">
+    //            <InputNumber min={500} max={1000}></InputNumber>
+    //        </Form.Item>
+    //        <Form.Item name="max_price" label="Max Price">
+    //            <InputNumber min={500} max={1000}></InputNumber>
+    //        </Form.Item>
+    //        <Form.Item name="start_date" label="Start Date">
+    //            <DatePicker></DatePicker>
+    //        </Form.Item>
+    //        <Form.Item name="mean_rate" label="Min Rate">
+    //            <InputNumber min={0} max={5} step={0.5}></InputNumber>
+    //        </Form.Item>
+    //        <Form.Item name="bedroom_num" label="Min Bedroom Num">
+    //            {/* <InputNumber min={0} max={4} step={1}></InputNumber> */}
+    //            <this.RoomCheckboxGroup />
+    //        </Form.Item>
+    //        <Form.Item name="bathroom_num" label="Min Bathroom Num">
+    //            {/* <InputNumber min={0} max={4} step={1}></InputNumber> */}
+    //            <this.RoomCheckboxGroup />
+    //        </Form.Item>
+    //        <Form.Item>
+    //            <Button type="primary" htmlType="submit">
+    //                Search
+    //            </Button>
+    //        </Form.Item>
+    //    </Form>
+    // );
+
     render() {
         return (<div><h1>Compare</h1>
-//            < this.form />
             {this.state.results && <Nested data={this.state.info_left} />}
         </div>)
     }
