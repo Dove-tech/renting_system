@@ -7,8 +7,11 @@ import { getCurrentUser } from './utils';
 class Detail extends Component {
   constructor(props) {
     super(props);
+    console.log("href", window.location.href);
+    let params = new URL(window.location).searchParams;
+    console.log(params.get("id"));
     this.state = {
-      apartment_id: 1001,
+      apartment_id: params.get('id'),
       // user_id: this.props.userId,
       user_id: getCurrentUser(),
       // user_id: 0,
