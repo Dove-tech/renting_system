@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { hashHistory as history } from 'react-router';
 import { BrowserRouter as Router, Routes, Switch, Route, Link } from 'react-router-dom';
 import { Layout, Menu, Dropdown } from 'antd';
-import { SearchOutlined, HeartTwoTone, SmileTwoTone } from '@ant-design/icons';
+import { SearchOutlined, HeartTwoTone, SmileTwoTone, EyeOutlined } from '@ant-design/icons';
 import './css/main.css';
 import './index.css';
 import Favorite from './Favorite';
@@ -52,6 +52,9 @@ class Main extends Component {
           <Menu className="nav-menu" mode="horizontal">
             <Menu.Item key="search" icon={<SearchOutlined style={{ color: "#52c41a" }} />}>
               <Link to='/search'>Search</Link>
+            </Menu.Item>
+            <Menu.Item key="evaluate" icon={<EyeOutlined />}>
+              <Link to='/evaluate'>Evaluate</Link>
             </Menu.Item>
             <Menu.Item key="favorite" icon={<HeartTwoTone twoToneColor="#eb2f96" />}>
               <Link to='/favorite'>Favorite</Link>
