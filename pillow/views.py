@@ -294,7 +294,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         print(rating[0][0])
         try:
             r[0]["rating"] = round(rating[0][0],2)
-            ret = r
+            ret = r[0]
         except:
             return Response({"response": {"error": "NONE", "message": "Something must be wrong"}, "status": 200},
                             status=status.HTTP_200_OK)

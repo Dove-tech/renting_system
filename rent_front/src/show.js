@@ -17,7 +17,7 @@ class Show extends Component {
 
     getEverything = () => {
       const request = {id: this.state.apartment_id}
-        axios.post('/pillow/search/fetchDetails', request).then(res => {
+        axios.post('/pillow/search/fetchDetails/', request).then(res => {
           console.log(res);
           if (res?.data?.response?.results) {
             this.setState({shown_apartment: res?.data?.response.results})
@@ -25,20 +25,18 @@ class Show extends Component {
         }).catch(e => console.log(e));
     };
 
-    render() {
+    show_apart_info() {
         return (
           <Descriptions title="Apartment Info" bordered>
-          <Descriptions.Item label="Address">{this.state.shown_apartment[0].address}</Descriptions.Item>
-          <Descriptions.Item label="Utility">{this.state.shown_apartment[0].utility}</Descriptions.Item>
-          <Descriptions.Item label="Gym">{this.state.shown_apartment[0].gym === 1 ? 'Yes' : 'No'}</Descriptions.Item>
-          <Descriptions.Item label="Parking">{this.state.shown_apartment[0].parking === 1 ? 'Yes' : 'No'}</Descriptions.Item>
-          <Descriptions.Item label="Laundry">{this.state.shown_apartment[0].laundry === 1 ? 'Yes' : 'No'}</Descriptions.Item>
-          <Descriptions.Item label="Swimming pool">{this.state.shown_apartment[0].swimming_pool === 1 ? 'Yes' : 'No'}</Descriptions.Item>
-          <Descriptions.Item label="Price Range">${this.state.shown_apartment[0].min_price}-{this.state.shown_apartment[0].max_price}</Descriptions.Item>
-          <Descriptions.Item label="Start date">{this.state.shown_apartment[0].start_date}</Descriptions.Item>
+          <Descriptions.Item label="name">{this.state.shown_apartment.apartment_name}</Descriptions.Item>
       </Descriptions>
         );
     }
+    render() {
+      return (<div><h1>details</h1>
+          {this.state.shown_apartment && <this.show_apart_info />}
+      </div>)
+  }
 }
 
 export default Show;
