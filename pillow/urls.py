@@ -10,6 +10,8 @@ router.register(r'reset-password', ResetPasswordViewSet, basename="resetpassword
 router.register(r'search',SearchViewSet, basename='search')
 router.register(r'favorite', FavoriteViewSet, basename="favorite")
 router.register(r'compare', CompareViewSet, basename="compare")
+router.register(r'apartmentlist', ApartmentListViewSet, basename="apartmentlist")
+
 
 
 urlpatterns = router.urls

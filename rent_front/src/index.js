@@ -14,6 +14,7 @@ import Search from './Search';
 // import Main from './Main';
 // import Compare from './Compare';
 import Detail from './Detail';
+import Evaluate from './Evaluate';
 
 const { Header, Content } = Layout;
 
@@ -80,6 +81,7 @@ class Main extends Component {
             <Route exact path='/resetpassword' element={<Resetpassword userId={this.state.userId}/>} />
             <Route exact path='/favorite' element={<Favorite userId={this.state.userId}/>} />
             <Route exact path='/apartment/:id' element={<Detail userId={this.state.userId}/>} />
+            <Route exact path='/evaluate' element={<Evaluate />}/>
             {/* <Route exact path='/compare' element={<Compare />} /> */}
           </Routes>
         </Content>
@@ -87,9 +89,4 @@ class Main extends Component {
     </Router>;
   }
 }
-
-ReactDOM.render(
-  <Main />,
-  document.getElementById('root')
-);
 
