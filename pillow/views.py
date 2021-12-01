@@ -223,21 +223,31 @@ class SearchViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'])
     def fetchDetails(self, request):
         apartment_id = request.data.get('id',None)
-        query = "select a.name as apartment_name, a.location, a.address, a.gym, a.parking, a.utility, a.laundry, a.swimming_pool, a.description as department_description, a.min_price, a.max_price, rm.bedroom_num, rm.bathroom_num, rm.price, rm.start_time, rm.end_time, rm.description as room_description, photo.photo_link, Landlord.name as landlord_name, Landlord.email as landlord_email, Landlord.phone as landlord_phone from Apartment a JOIN room rm on a.id = rm.apartment_id JOIN photo on photo.property_room_id = rm.id JOIN landlord on a.landlord_id = Landlord.id where a.id = {}".format(apartment_id)
+        query = "select a.name as apartment_name, a.location, a.address, a.gym, a.parking, a.utility, a.laundry, a.swimming_pool, a.description as department_description, a.min_price, a.max_price from Apartment a where a.id = {}".format(apartment_id)
         cursor = connection.cursor()
         cursor.execute(query)
-
-
-        r = [dict((cursor.description[i][0], str(value))
+        a = [dict((cursor.description[i][0], str(value))
+                  for i, value in enumerate(row)) for row in cursor.fetchall()]
+        query = "select photo.photo_link from photo where property_apartment_id = {}".format(apartment_id)
+        cursor.execute(query)
+        photos = cursor.fetchall()
+        temp = []
+        for photo in photos:
+            temp.append(photo[0])
+        photos = temp
+        query = "select * from Room where apartment_id = {}".format(apartment_id)
+        cursor.execute(query)
+        rms = [dict((cursor.description[i][0], str(value))
                   for i, value in enumerate(row)) for row in cursor.fetchall()]
         query = "select avg(star) from Rating where apartment_id = {}".format(apartment_id)
-        cursor = connection.cursor()
         cursor.execute(query)
         rating = cursor.fetchall()
         print(rating[0][0])
         try:
-            r[0]["rating"] = round(rating[0][0],2)
-            ret = r[0]
+            a[0]["photo_link"] = photos
+            a[0]["rooms"] = rms
+            a[0]["rating"] = round(rating[0][0],2)
+            ret = a[0]
         except:
             return Response({"response": {"error": "NONE", "message": "Something must be wrong"}, "status": 200},
                             status=status.HTTP_200_OK)
