@@ -48,7 +48,6 @@ class Signin extends Component {
           wrapperCol={{ span: 14 }}
           initialValues={{ remember: true }}
           onFinish={this.onFinish}
-          // onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
           <Form.Item

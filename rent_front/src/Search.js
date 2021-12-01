@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Checkbox, Button, Divider, DatePicker, Input, InputNumber, Row, Col, Form, message, List, Descriptions } from 'antd';
+import { Checkbox, Button, PageHeader, DatePicker, Input, InputNumber, Row, Col, Form, message, List, Descriptions } from 'antd';
 import moment from 'moment';
 
 const CheckboxGroup = Checkbox.Group;
@@ -13,18 +13,6 @@ class Search extends Component {
             search_value: {},
             results: null
         }
-    }
-
-    // Checkbox onchange
-    onChange = (checkedValue) => {
-        // let new_search_value = this.state.search_value;
-        // checkedValue.forEach(val => {
-        //     new_search_value[val] = true
-        // });
-        console.log(checkedValue);
-        // this.setState({ search_value: new_search_value }, () => {
-        //     console.log("state", this.state.search_value);
-        // });
     }
 
     search = (searchValue) => {
@@ -198,7 +186,8 @@ class Search extends Component {
     );
 
     render() {
-        return (<div><h1>Search</h1>
+        return (<div>
+            <PageHeader className="page-header" title="Search" backIcon={false} />
             <this.form />
             {this.state.results && <this.resultList />}
         </div>)

@@ -1,5 +1,5 @@
-import { Form, Input, Checkbox, Button, Modal, message } from 'antd';
-import React, { useState, Component } from 'react';
+import { Form, Input, Button, PageHeader, message } from 'antd';
+import React, { Component } from 'react';
 import axios from 'axios';
 
 class Resetpassword extends Component {
@@ -25,6 +25,7 @@ class Resetpassword extends Component {
     render() {
         return (
             <>
+                <PageHeader className="page-header" title="Reset Password" backIcon={false} />
                 <Form
                     name="basic"
                     labelCol={{ span: 8 }}

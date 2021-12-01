@@ -23,7 +23,7 @@ const myMenu = (
     {/* <Link to="/signup"><Menu.Item>Sign Up</Menu.Item></Link>
     <Link to="/signin"><Menu.Item>Sign In</Menu.Item></Link> */}
     <Link to="/resetpassword"><Menu.Item>Reset Password</Menu.Item></Link>
-    <Menu.Item>Log Out</Menu.Item>
+    {/* <Menu.Item>Log Out</Menu.Item> */}
   </Menu>
 );
 
@@ -54,12 +54,12 @@ class Main extends Component {
               <Link to='/search'>Search</Link>
             </Menu.Item>
             <Menu.Item key="evaluate" icon={<EyeOutlined />}>
-              <Link to='/evaluate'>Evaluate</Link>
+              <Link to='/evaluate'>Browse</Link>
             </Menu.Item>
             <Menu.Item key="favorite" icon={<HeartTwoTone twoToneColor="#eb2f96" />}>
               <Link to='/favorite'>Favorite</Link>
             </Menu.Item>
-            {!this.state.userId ? <>
+            {this.state.userId === null ? <>
               <Menu.Item key="register">
                 <Link to='/signup'>Register</Link>
               </Menu.Item>
@@ -77,7 +77,7 @@ class Main extends Component {
         <Content style={{ padding: '20px 50px' }}>
           <Routes>
             {/* <Route exact path='/' element={<Main />}></Route> */}
-            <Route exact path='/' element={<Signin getUser={this.returnUser}/>}></Route>
+            <Route exact path='/' element={<Signin />}></Route>
             <Route exact path='/search' element={<Search userId={this.state.userId}/>} />
             <Route exact path='/signup' element={<Signup />} />
             <Route exact path='/signin' element={<Signin getUser={this.returnUser}/>} />

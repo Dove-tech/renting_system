@@ -1,5 +1,5 @@
-import { Form, Input, Checkbox, Button, Modal, message, List, Card, Descriptions } from 'antd';
-import React, { Component, useState, useEffect } from 'react';
+import { PageHeader, List, Descriptions } from 'antd';
+import React, { Component } from 'react';
 import axios from 'axios';
 
 
@@ -54,7 +54,8 @@ class Evaluate extends Component {
 
     render() {
         console.log(this.state.apartmentList)
-        return (<div><h1>Apartments and their evaluation</h1>
+        return (<div>
+            <PageHeader className="page-header" title="Apartments Browser" backIcon={false} />
             {this.state.apartmentList && <this.resultList />}
         </div>)
     }

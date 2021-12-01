@@ -1,4 +1,4 @@
-import { Form, Input, Checkbox, Button, Modal, message, List, Card, Descriptions } from 'antd';
+import { Row, Col, Button, message, List, Descriptions } from 'antd';
 import React, { Component, useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -27,11 +27,11 @@ class Favorite extends Component {
     }
 
     getFavorite = () => {
-        const request = {user: this.state.user};
+        const request = { user: this.state.user };
         axios.post('/pillow/favorite/query_all_favorite/', request).then(res => {
             console.log(res);
             if (res?.data?.response?.results) {
-                this.setState({favoriteList: res?.data?.response?.results})
+                this.setState({ favoriteList: res?.data?.response?.results })
             }
         }).catch(e => console.log(e));
     };
@@ -53,7 +53,7 @@ class Favorite extends Component {
         <List
             itemLayout="vertical"
             size="small"
-            pagination={{pageSize: 5}}
+            pagination={{ pageSize: 5 }}
             dataSource={this.state.favoriteList}
             renderItem={item => (
                 <List.Item
@@ -63,22 +63,28 @@ class Favorite extends Component {
                         title={item.apartment_name + " " + item.bedroom_num + "b" + item.bathroom_num + "b"}
                         description={null}
                     />
-                    <Descriptions title="Room Info" bordered>
-                        <Descriptions.Item label="Price">{item.price}</Descriptions.Item>
-                        <Descriptions.Item label="date">{item.start_time}-{item.end_time}</Descriptions.Item>
-                    </Descriptions>
-                    <Button onClick={() => {
-                    this.deleteFav(item.id)
-                }}>Delete</Button>
+                    <Row>
+                        <Col span={16}>
+                            <Descriptions title="Room Info" bordered>
+                                <Descriptions.Item label="Price">{item.price}</Descriptions.Item>
+                                <Descriptions.Item label="date">{item.start_time}-{item.end_time}</Descriptions.Item>
+                            </Descriptions>
+                        </Col>
+                        <Col span={4} style={{display: "flex", alignItems: "center", padding: "60px 0"}}>
+                            <Button onClick={() => {
+                                this.deleteFav(item.id)
+                            }}>Delete</Button>
+                        </Col>
+                    </Row>
                 </List.Item>)
-               }
-            >
+            }
+        >
         </List>
     );
 
     render() {
         return <div>
-                {/* <Form
+            {/* <Form
                     name="basic"
                     labelCol={{ span: 8 }}
                     wrapperCol={{ span: 16 }}
@@ -121,7 +127,8 @@ class Favorite extends Component {
                         </Button>
                     </Form.Item>
                 </Form> */}
-                {this.state.favoriteList && this.favoriteList()} 
+
+            {this.state.favoriteList && this.favoriteList()}
         </div>;
     }
 }

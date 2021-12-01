@@ -1,32 +1,7 @@
-import { Row, Col, Form, Input, Checkbox, Button, Modal, message, List, Card, Descriptions } from 'antd';
+import { PageHeader, Row, Col, Button, message, List, Descriptions } from 'antd';
 import React, { Component } from 'react';
 import axios from 'axios';
 import { HeartTwoTone } from '@ant-design/icons';
-
-const apartment_info_ = {
-  address: "rlmHgokPGO",
-  apartment_name: "Elizabeth Macias",
-  bathroom_num: "1",
-  bedroom_num: "1",
-  department_description: "None",
-  end_time: "2023-10-29",
-  gym: "0",
-  landlord_email: "VSSreXR@gmail.com",
-  landlord_name: "Cliff Neeley",
-  landlord_phone: "645-234-3349",
-  laundry: "1",
-  location: "(48.55029, 26.28232)",
-  max_price: "640",
-  min_price: "539",
-  parking: "0",
-  photo_link: "https://liveatoctave.com/sites/liveatoctave.com/files/1539_06a.jpg",
-  price: "658.4",
-  rating: 4,
-  room_description: "None",
-  start_time: "2022-10-29",
-  swimming_pool: "0",
-  utility: "6"
-};
 
 class Detail extends Component {
   constructor(props) {
@@ -81,7 +56,8 @@ class Detail extends Component {
 
   render() {
     const apartment_info = this.state.apartment_info;
-    return (<div><h1>details</h1>
+    return (<div>
+      <PageHeader className="page-header" title="Apartment Detail" backIcon={false} />
       {this.state.apartment_info && <>
         <div className="apart-photo"></div>
         <div className="apart-info">
@@ -121,12 +97,6 @@ class Detail extends Component {
             dataSource={apartment_info.rooms}
             renderItem={item => (
               <List.Item>
-                {/* "bedroom_num": "4",
-                    "bathroom_num": "4",
-                    "price": "850.0",
-                    "start_time": "2022-08-01",
-                    "end_time": "2023-07-31",
-                    "description": "4b4b" */}
                 <Descriptions title="Room Info" bordered>
                   <Descriptions.Item label="Description">{item.description}</Descriptions.Item>
                   <Descriptions.Item label="Price">${item.price}</Descriptions.Item>
