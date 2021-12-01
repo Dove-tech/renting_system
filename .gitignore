@@ -1,3 +1,5 @@
 rent_front/node_modules/
 *.pyc
+rent_front/node_modules/.cache
 *.eslintcache
+

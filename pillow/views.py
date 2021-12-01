@@ -262,7 +262,13 @@ class SearchViewSet(viewsets.ModelViewSet):
         r = [dict((cursor.description[i][0], str(value))
                   for i, value in enumerate(row)) for row in cursor.fetchall()]
         try:
-            ret = r
+            ret = []
+            check = []
+            for item in r:
+                if item["name"] not in check:
+                    check.append(item["name"])
+                    ret.append(item)
+
         except:
             return Response({"response": {"error": "NONE", "message": "No search result"}, "status": 200},
                             status=status.HTTP_200_OK)
