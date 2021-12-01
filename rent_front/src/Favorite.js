@@ -55,9 +55,9 @@ class Favorite extends Component {
             dataSource={this.state.favoriteList}
             renderItem={item => (
             <List.Item>
-                <Card title="Room ID">{item}</Card>
+                <Card title="Room ID">{item.id}</Card>
                 <Button onClick={() => {
-                    this.deleteFav(item)
+                    this.deleteFav(item.id)
                 }}>Delete</Button>
             </List.Item>
             )}  
