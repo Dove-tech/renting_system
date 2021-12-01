@@ -64,8 +64,8 @@ class Detail extends Component {
   }
   addToFavorite = (room_id) => {
     const request = {user_id: this.state.user_id, room_id: room_id}
-    axios.post('/pillow/search/addToFavorite/'. request).then(res => {
-      if (res?.data?.response?.error == "successful") {
+    axios.post('/pillow/search/addToFavorite/', request).then(res => {
+      if (res?.data?.response?.error === "successful") {
         console.log(res);
         message.info("You have successfully added to your favorite list!");
       }
