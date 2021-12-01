@@ -11,6 +11,7 @@ import Resetpassword from './Resetpassword';
 import Search from './Search';
 import Main from './Main';
 import Compare from './Compare';
+import Show from './Show'
 
 
 ReactDOM.render(
@@ -23,6 +24,7 @@ ReactDOM.render(
       <Route exact path='/resetpassword' element={<Resetpassword />} />
       <Route exact path='/favorite' element={<Favorite />} />
       <Route exact path='/compare' element={<Compare />} />
+      <Route exact path='/show' element={<Show />}/>
       </Routes>
   </Router>,
   document.getElementById('root')

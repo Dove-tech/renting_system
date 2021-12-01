@@ -283,10 +283,17 @@ class SearchViewSet(viewsets.ModelViewSet):
         query = "select a.name as apartment_name, a.location, a.address, a.gym, a.parking, a.utility, a.laundry, a.swimming_pool, a.description as department_description, a.min_price, a.max_price, rm.bedroom_num, rm.bathroom_num, rm.price, rm.start_time, rm.end_time, rm.description as room_description, photo.photo_link, Landlord.name as landlord_name, Landlord.email as landlord_email, Landlord.phone as landlord_phone from Apartment a JOIN room rm on a.id = rm.apartment_id JOIN photo on photo.property_room_id = rm.id JOIN landlord on a.landlord_id = Landlord.id where a.id = {}".format(apartment_id)
         cursor = connection.cursor()
         cursor.execute(query)
-        print(query)
+        
+
         r = [dict((cursor.description[i][0], str(value))
                   for i, value in enumerate(row)) for row in cursor.fetchall()]
+        query = "select avg(star) from Rating where apartment_id = {}".format(apartment_id)
+        cursor = connection.cursor()
+        cursor.execute(query)
+        rating = cursor.fetchall()
+        print(rating[0][0])
         try:
+            r[0]["rating"] = round(rating[0][0],2)
             ret = r
         except:
             return Response({"response": {"error": "NONE", "message": "Something must be wrong"}, "status": 200},
