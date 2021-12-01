@@ -12,20 +12,14 @@ class Main extends Component {
         super(props);
     }
     
-    my = (<Menu>
-        <Menu.Item></Menu.Item>
-    </Menu>);
 
     render() {
         return <Layout>
             <Header>
                 <div className="logo" />
                 <Menu className="nav-menu" mode="horizontal">
-                    <Menu.Item key="compare" icon={<BulbTwoTone twoToneColor="#52c41a" />}>
-                        Compare
-                    </Menu.Item>
                     <Menu.Item key="favorite" icon={<HeartTwoTone twoToneColor="#eb2f96" />}>
-                        Favorite
+                        <Link to='/favorite'>Favorite</Link>
                     </Menu.Item>
                     <Menu.Item key="user" icon={<SmileTwoTone />}>
                         My

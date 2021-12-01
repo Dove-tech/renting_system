@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import { Checkbox, Button, Divider, DatePicker, Input, InputNumber, Row, Col, Form, message, List, Descriptions } from 'antd';
 import moment from 'moment';
 
@@ -56,6 +57,7 @@ class Search extends Component {
                         title={item.name}
                         description={null}
                     />
+                    <Link to={{pathname: `/apartment/${item.id}`}}>
                     <Descriptions title="Apartment Info" bordered>
                         <Descriptions.Item label="Address">{item.address}</Descriptions.Item>
                         <Descriptions.Item label="Utility">{item.utility}</Descriptions.Item>
@@ -67,7 +69,9 @@ class Search extends Component {
                         <Descriptions.Item label="Start date">{item.start_date}</Descriptions.Item>
                         <Descriptions.Item label="End date" span={2}>{item.end_date}</Descriptions.Item>
                     </Descriptions>
-                </List.Item>)}
+                    </Link>
+                </List.Item>)
+               }
             >
         </List>);
     }
@@ -194,7 +198,7 @@ class Search extends Component {
 
     render() {
         return (<div><h1>Search</h1>
-            < this.form />
+            <this.form />
             {this.state.results && <this.resultList />}
         </div>)
     }

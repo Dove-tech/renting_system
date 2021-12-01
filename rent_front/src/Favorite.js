@@ -17,24 +17,14 @@ class Favorite extends Component {
     }
 
     componentDidMount() {
-        this.setState({ user: window.localStorage.getItem("user")  }, () => {
-            console.log("state", this.state.user);
-        });
-        this.getFavorite();
+        const userId = window.localStorage.getItem("user");
+        if (userId) {
+            this.setState({ user: userId }, () => {
+                console.log("current user", this.state.user);
+                this.getFavorite();
+            });
+        }
     }
-
-    // onFinish = (values) => {
-    //     console.log("values", values);
-    //     const deleteInfo = { user: values.user, room: values.room };
-    //     axios.post('/pillow/favorite/deleteFavorite/', deleteInfo).then((res) => {
-    //         console.log("res", res);
-    //         if (res.data.response.error === 'OK') {
-    //             message.info("You've deleted successfully!");
-    //         } else {
-    //             message.error("This is an error message");
-    //         }
-    //     });
-    // }
 
     getFavorite = () => {
         const request = {user: this.state.user};
@@ -58,16 +48,6 @@ class Favorite extends Component {
             }
         });
     }
-
-    getFavorite = () => {
-        const request = {user: this.state.user};
-        axios.post('/pillow/favorite/query_all_favorite/', request).then(res => {
-            console.log(res);
-            if (res?.data?.response?.results) {
-                this.setState({favoriteList: res?.data?.response?.results})
-            }
-        }).catch(e => console.log(e));
-    };
 
     favoriteList = () => (
         <List 

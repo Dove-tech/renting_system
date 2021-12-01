@@ -1,5 +1,5 @@
 // Remove blank attributes from an object
-const removeEmpty = (obj) => {
+export const removeEmpty = (obj) => {
     return Object.fromEntries(
         Object.entries(obj)
             .filter(([_, v]) => v != null)
@@ -9,4 +9,11 @@ const removeEmpty = (obj) => {
             )
 };
 
-export removeEmpty;
+export const getCurrentUser = () => {
+    let userId = null;
+    const user = window.localStorage.user;
+    if (typeof user === 'number') {
+        userId = user;
+    }
+    return userId;
+}
