@@ -50,18 +50,30 @@ class Favorite extends Component {
     }
 
     favoriteList = () => (
-        <List 
-            grid={{ gutter: 16, column: 4 }}
+        <List
+            itemLayout="vertical"
+            size="small"
+            pagination={{pageSize: 5}}
             dataSource={this.state.favoriteList}
             renderItem={item => (
-            <List.Item>
-                <Card title="Room ID">{item.id}</Card>
-                <Button onClick={() => {
+                <List.Item
+                    key={item.id}
+                >
+                    <List.Item.Meta
+                        title={item.apartment_name + " " + item.bedroom_num + "b" + item.bathroom_num + "b"}
+                        description={null}
+                    />
+                    <Descriptions title="Room Info" bordered>
+                        <Descriptions.Item label="Price">{item.price}</Descriptions.Item>
+                        <Descriptions.Item label="date">{item.start_time}-{item.end_time}</Descriptions.Item>
+                    </Descriptions>
+                    <Button onClick={() => {
                     this.deleteFav(item.id)
                 }}>Delete</Button>
-            </List.Item>
-            )}  
-        />
+                </List.Item>)
+               }
+            >
+        </List>
     );
 
     render() {

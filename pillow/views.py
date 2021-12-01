@@ -236,6 +236,10 @@ class SearchViewSet(viewsets.ModelViewSet):
         for photo in photos:
             temp.append(photo[0])
         photos = temp
+        query = "select * from Landlord where id = (select landlord_id from Apartment where id = {})".format(apartment_id)
+        cursor.execute(query)
+        ll = [dict((cursor.description[i][0], str(value))
+                  for i, value in enumerate(row)) for row in cursor.fetchall()]
         query = "select * from Room where apartment_id = {}".format(apartment_id)
         cursor.execute(query)
         rms = [dict((cursor.description[i][0], str(value))
@@ -246,6 +250,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         rating = cursor.fetchall()
         print(rating[0][0])
         try:
+            a[0]["lanlord_info"] = ll[0]
             a[0]["photo_link"] = photos
             a[0]["rooms"] = rms
             a[0]["rating"] = round(rating[0][0],2)
