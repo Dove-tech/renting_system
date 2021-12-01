@@ -317,6 +317,8 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         print(request)
         user_id = request.data.get('user', None)
         room_id = request.data.get('room', None)
+        print("userId:{}".format(user_id))
+        print("roomId:{}".format(room_id))
         cursor = connection.cursor()
         cursor.execute(
             'SELECT * FROM Favorite WHERE user_id = %s AND room_id = %s', [user_id, room_id])
@@ -324,23 +326,24 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         print(result_set)
 
         if result_set:
-            # sql = """drop trigger if exists utopillow.FavoriteTrigger;"""
-            # executeSQL(sql)
-            # sql = """
-            # create trigger FavoriteTrigger after delete on Favorite
-            # for each row
-            # begin
-            #     set @extra=-1;
-            #     set @apartment_id= (select distinct apartment_id from room where id=new.room_id);
-            #     set @exist= (select count(*) from Rating where user_id=new.user_Id and apartment_id=@apartment_id);
-            #     if @exist=1 then
-            #         set @start=(select star from Rating where user_id=new.user_Id and apartment_id=@apartment_id);
-            #         if @start+@extra>=0 then
-            #             update rating set star=@start+@extra where user_id=new.user_Id and apartment_id=@apartment_id;
-            #         end if;
-            #     end if;
-            # end;
-            # """
+            sql = """drop trigger if exists utopillow.deleteFavoriteTrigger;"""
+            executeSQL(sql)
+            sql = """
+            create trigger deleteFavoriteTrigger after delete on Favorite
+            for each row
+            begin
+                set @extra=-1;
+                set @apartment_id= (select distinct apartment_id from room where id=old.room_id);
+                set @exist= (select count(*) from Rating where user_id=old.user_Id and apartment_id=@apartment_id);
+                if @exist=1 then
+                    set @start=(select star from Rating where user_id=old.user_Id and apartment_id=@apartment_id);
+                    if @start+@extra>=0 then
+                        update rating set star=@start+@extra where user_id=old.user_Id and apartment_id=@apartment_id;
+                    end if;
+                end if;
+            end;
+            """
+            executeSQL(sql)
             cursor.execute('DELETE  FROM Favorite WHERE room_id = %s AND user_id = %s ', [
                 result_set[1], result_set[0]])
             return Response(
