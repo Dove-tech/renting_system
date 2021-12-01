@@ -3,14 +3,15 @@ import React, { Component, useState, useEffect } from 'react';
 import axios from 'axios';
 
 
-class Show extends Component {
+class Detail extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            apartment_id: 0,
-            shown_apartment: null
+          apartment_id: 269,
+          shown_apartment: null
         };
     }
+
     componentDidMount() {
        this.getEverything();
     }
@@ -25,13 +26,16 @@ class Show extends Component {
         }).catch(e => console.log(e));
     };
 
-    show_apart_info() {
+    show_apart_info = () => {
         return (
           <Descriptions title="Apartment Info" bordered>
-          <Descriptions.Item label="name">{this.state.shown_apartment.apartment_name}</Descriptions.Item>
-      </Descriptions>
+            <Descriptions.Item label="name">
+              {/* {this.state.shown_apartment} */}
+            </Descriptions.Item>
+          </Descriptions>
         );
     }
+
     render() {
       return (<div><h1>details</h1>
           {this.state.shown_apartment && <this.show_apart_info />}
@@ -39,4 +43,4 @@ class Show extends Component {
   }
 }
 
-export default Show;
+export default Detail;
