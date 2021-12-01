@@ -80,7 +80,7 @@ class Main extends Component {
             <Route exact path='/signin' element={<Signin getUser={this.returnUser}/>} />
             <Route exact path='/resetpassword' element={<Resetpassword userId={this.state.userId}/>} />
             <Route exact path='/favorite' element={<Favorite userId={this.state.userId}/>} />
-            <Route exact path='/apartment/:id' element={<Detail userId={this.state.userId}/>} />
+            <Route exact path='/apartment' element={<Detail userId={this.state.userId}/>} />
             <Route exact path='/evaluate' element={<Evaluate />}/>
             {/* <Route exact path='/compare' element={<Compare />} /> */}
           </Routes>
