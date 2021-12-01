@@ -51,8 +51,8 @@ export default class Compare extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            left_id: 1,
-            right_id: 2,
+            left_id: 9,
+            right_id: 10,
             info_left: null,
             info_right: null
         }
