@@ -57,7 +57,8 @@ class Search extends Component {
                         title={item.name}
                         description={null}
                     />
-                    <Link to={{pathname: `/apartment/${item.id}`}}>
+                    {/* <Link to={{pathname: `/apartment/${item.id}`}}> */}
+                    <Link to={{pathname: `/apartment`}}>
                     <Descriptions title="Apartment Info" bordered>
                         <Descriptions.Item label="Address">{item.address}</Descriptions.Item>
                         <Descriptions.Item label="Utility">{item.utility}</Descriptions.Item>

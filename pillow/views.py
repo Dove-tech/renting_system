@@ -302,11 +302,11 @@ class SearchViewSet(viewsets.ModelViewSet):
                            [user_id, room_id])
             return Response(
                 {"response": {"error": "successful", "user": user_set[0], "room": room_set[0]},
-                 "status": 201}, status=status.HTTP_201_CREATED)
+                 "status": 201}, status=status.HTTP_200_OK)
 
         else:
             return Response({"response": {"error": "You have added this room to Favorite"}, "status": 400},
-                            status=status.HTTP_400_BAD_REQUEST)
+                            status=status.HTTP_200_OK)
 
 
 class FavoriteViewSet(viewsets.ModelViewSet):

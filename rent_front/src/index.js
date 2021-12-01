@@ -77,7 +77,7 @@ class Main extends Component {
         <Content style={{ padding: '20px 50px' }}>
           <Routes>
             {/* <Route exact path='/' element={<Main />}></Route> */}
-            <Route exact path='/' element={<Signin />}></Route>
+            <Route exact path='/' element={<Signin getUser={this.returnUser}/>}></Route>
             <Route exact path='/search' element={<Search userId={this.state.userId}/>} />
             <Route exact path='/signup' element={<Signup />} />
             <Route exact path='/signin' element={<Signin getUser={this.returnUser}/>} />
