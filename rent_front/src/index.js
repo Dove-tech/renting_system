@@ -12,7 +12,7 @@ import Search from './Search';
 import Main from './Main';
 import Compare from './Compare';
 import Detail from './Detail';
-
+import Evaluate from './Evaluate';
 ReactDOM.render(
   <Router>
       <Routes>
@@ -24,6 +24,7 @@ ReactDOM.render(
       <Route exact path='/favorite' element={<Favorite />} />
       <Route exact path='/compare' element={<Compare />} />
       <Route exact path='/apartment' element={<Detail />}/>
+      <Route exact path='/evaluate' element={<Evaluate />}/>
       </Routes>
   </Router>,
   document.getElementById('root')
