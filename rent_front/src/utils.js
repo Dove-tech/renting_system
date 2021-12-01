@@ -17,3 +17,12 @@ export const getCurrentUser = () => {
     }
     return userId;
 }
+
+export const getCurrentApartment = () => {
+    let apartmentId = null;
+    const apartment = window.localStorage.apartment;
+    if (typeof apartmentId === 'number') {
+        apartmentId = apartment;
+    }
+    return apartmentId;
+}

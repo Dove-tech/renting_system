@@ -2,6 +2,7 @@ import { PageHeader, Row, Col, Button, message, List, Descriptions } from 'antd'
 import React, { Component } from 'react';
 import axios from 'axios';
 import { HeartTwoTone } from '@ant-design/icons';
+import { getCurrentUser } from './utils';
 
 class Detail extends Component {
   constructor(props) {
@@ -9,7 +10,8 @@ class Detail extends Component {
     this.state = {
       apartment_id: 1001,
       // user_id: this.props.userId,
-      user_id: 0,
+      user_id: getCurrentUser(),
+      // user_id: 0,
       // apartment_id: this.props.location,
       // apartment_id: this.props.match,
       apartment_info: null
@@ -72,10 +74,10 @@ class Detail extends Component {
                 <Descriptions.Item label="Description">{apartment_info.department_description}</Descriptions.Item>
                 <Descriptions.Item label="Address">{apartment_info.address}</Descriptions.Item>
                 <Descriptions.Item label="Utility">{apartment_info.utility}</Descriptions.Item>
-                <Descriptions.Item label="Gym">{apartment_info.gym === 1 ? 'Yes' : 'No'}</Descriptions.Item>
-                <Descriptions.Item label="Parking">{apartment_info.parking === 1 ? 'Yes' : 'No'}</Descriptions.Item>
-                <Descriptions.Item label="Laundry">{apartment_info.laundry === 1 ? 'Yes' : 'No'}</Descriptions.Item>
-                <Descriptions.Item label="Swimming pool">{apartment_info.swimming_pool === 1 ? 'Yes' : 'No'}</Descriptions.Item>
+                <Descriptions.Item label="Gym">{apartment_info.gym == 1 ? 'Yes' : 'No'}</Descriptions.Item>
+                <Descriptions.Item label="Parking">{apartment_info.parking == 1 ? 'Yes' : 'No'}</Descriptions.Item>
+                <Descriptions.Item label="Laundry">{apartment_info.laundry == 1 ? 'Yes' : 'No'}</Descriptions.Item>
+                <Descriptions.Item label="Swimming pool">{apartment_info.swimming_pool == 1 ? 'Yes' : 'No'}</Descriptions.Item>
                 <Descriptions.Item label="Price Range">${apartment_info.min_price}-{apartment_info.max_price}</Descriptions.Item>
                 {/* <Descriptions.Item label="Start date">{apartment_info.start_date}</Descriptions.Item>
                 <Descriptions.Item label="End date" span={2}>{apartment_info.end_date}</Descriptions.Item> */}

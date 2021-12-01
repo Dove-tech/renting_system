@@ -50,10 +50,10 @@ class Search extends Component {
                     <Descriptions title="Apartment Info" bordered>
                         <Descriptions.Item label="Address">{item.address}</Descriptions.Item>
                         <Descriptions.Item label="Utility">{item.utility}</Descriptions.Item>
-                        <Descriptions.Item label="Gym">{item.gym === 1 ? 'Yes' : 'No'}</Descriptions.Item>
-                        <Descriptions.Item label="Parking">{item.parking === 1 ? 'Yes' : 'No'}</Descriptions.Item>
-                        <Descriptions.Item label="Laundry">{item.laundry === 1 ? 'Yes' : 'No'}</Descriptions.Item>
-                        <Descriptions.Item label="Swimming pool">{item.swimming_pool === 1 ? 'Yes' : 'No'}</Descriptions.Item>
+                        <Descriptions.Item label="Gym">{item.gym == 1 ? 'Yes' : 'No'}</Descriptions.Item>
+                        <Descriptions.Item label="Parking">{item.parking == 1 ? 'Yes' : 'No'}</Descriptions.Item>
+                        <Descriptions.Item label="Laundry">{item.laundry == 1 ? 'Yes' : 'No'}</Descriptions.Item>
+                        <Descriptions.Item label="Swimming pool">{item.swimming_pool == 1 ? 'Yes' : 'No'}</Descriptions.Item>
                         <Descriptions.Item label="Price Range">${item.min_price}-{item.max_price}</Descriptions.Item>
                         <Descriptions.Item label="Start date">{item.start_date}</Descriptions.Item>
                         <Descriptions.Item label="End date" span={2}>{item.end_date}</Descriptions.Item>
