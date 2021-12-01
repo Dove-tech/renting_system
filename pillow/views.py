@@ -19,7 +19,7 @@ def executeSQL(sql, arguments=[]):
     with connection.cursor() as cursor:
         if arguments:
             print(sql, arguments)
-            cursor.execute(sql,arguments)
+            cursor.execute(sql, arguments)
         else:
             cursor.execute(sql)
         # columns = [col[0] for col in cursor.description]
@@ -146,7 +146,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         mean_rate = request.data.get('mean_rate')
         bedroom_num = request.data.get('bedroom_num')
         bathroom_num = request.data.get('bathroom_num')
-        
+
         query = "SELECT * FROM Apartment a JOIN Room rm on a.id = rm.apartment_id JOIN photo on photo.property_apartment_id = a.id WHERE "
         if name != None:
             query += "name like '%{}%'".format(name)
@@ -199,8 +199,9 @@ class SearchViewSet(viewsets.ModelViewSet):
             query += ")"
 
         if mean_rate != None:
-            query += " and id in (select apartment_id from Rating group by apartment_id having AVG(star) >= {})".format(mean_rate)
-        
+            query += " and id in (select apartment_id from Rating group by apartment_id having AVG(star) >= {})".format(
+                mean_rate)
+
         cursor = connection.cursor()
         cursor.execute(query)
         r = [dict((cursor.description[i][0], str(value))
@@ -240,6 +241,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         rms = [dict((cursor.description[i][0], str(value))
                   for i, value in enumerate(row)) for row in cursor.fetchall()]
         query = "select avg(star) from Rating where apartment_id = {}".format(apartment_id)
+        cursor = connection.cursor()
         cursor.execute(query)
         rating = cursor.fetchall()
         print(rating[0][0])
@@ -266,11 +268,10 @@ class SearchViewSet(viewsets.ModelViewSet):
         result_set = cursor.fetchall()
         # print(result_set)
 
-
         if not result_set:
-                sql = """drop trigger if exists utopillow.FavoriteTrigger;"""
-                executeSQL(sql)
-                sql = """
+            sql = """drop trigger if exists utopillow.FavoriteTrigger;"""
+            executeSQL(sql)
+            sql = """
                 create trigger FavoriteTrigger after insert on Favorite
                 for each row
                 begin
@@ -285,18 +286,18 @@ class SearchViewSet(viewsets.ModelViewSet):
                     end if;
                 end;
                 """
-                executeSQL(sql)
-                cursor.execute('SELECT * FROM User WHERE id = %s', [user_id])
-                user_set = cursor.fetchone()
-                instance_user = User(
+            executeSQL(sql)
+            cursor.execute('SELECT * FROM User WHERE id = %s', [user_id])
+            user_set = cursor.fetchone()
+            instance_user = User(
                 id=user_set[0], name=user_set[1], password=user_set[2])
-                cursor.execute('SELECT * FROM Room WHERE id = %s', [room_id])
-                room_set = cursor.fetchone()
-                cursor.execute('INSERT INTO Favorite VALUE(%s, %s)',
-                            [user_id, room_id])
-                return Response(
-                    {"response": {"error": "successful", "user": user_set[0], "room": room_set[0]},
-                    "status": 201}, status=status.HTTP_201_CREATED)
+            cursor.execute('SELECT * FROM Room WHERE id = %s', [room_id])
+            room_set = cursor.fetchone()
+            cursor.execute('INSERT INTO Favorite VALUE(%s, %s)',
+                           [user_id, room_id])
+            return Response(
+                {"response": {"error": "successful", "user": user_set[0], "room": room_set[0]},
+                 "status": 201}, status=status.HTTP_201_CREATED)
 
         else:
             return Response({"response": {"error": "You have added this room to Favorite"}, "status": 400},
@@ -311,15 +312,15 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         user_id = request.data.get('user', None)
         cursor = connection.cursor()
         string = 'SELECT * FROM Favorite WHERE user_id =' + str(user_id)
-        print(string)
         cursor.execute(
-            'SELECT * FROM Favorite WHERE user_id = %s', [user_id])
-        result_set = cursor.fetchall()
-        all_rooms = []
-        for item in result_set:
-            all_rooms.append(item[1])
+            'SELECT ro.id,ro.apartment_id,ro.bedroom_num, ro.bathroom_num, '
+            'ro.price, ro.start_time, ro.end_time, ro.description, ap.name as apartment_name '
+            'FROM Favorite fa JOIN Room ro on ro.id = fa.room_id JOIN Apartment ap on ro.apartment_id = ap.id '
+            'WHERE user_id = %s', [user_id])
+        results = [dict((cursor.description[i][0], str(value))
+                  for i, value in enumerate(row)) for row in cursor.fetchall()]
         return Response(
-            {"response": {"error": "OK", "results": all_rooms},
+            {"response": {"error": "OK", "results": results},
              "status": 201}, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['POST'])
@@ -399,7 +400,7 @@ class ApartmentListViewSet(viewsets.ModelViewSet):
     serializer_class = ApartmentSerializer
 
     @action(detail=False, methods=['POST'])
-    def showApartment(self,request):
+    def showApartment(self, request):
         sql = """drop procedure if exists utopillow.Evaluate;"""
         executeSQL(sql)
         sql = """
@@ -447,14 +448,10 @@ class ApartmentListViewSet(viewsets.ModelViewSet):
         cursor.execute(
             'SELECT * FROM resultTable')
         apartment_list = [dict((cursor.description[i][0], str(value))
-                          for i, value in enumerate(row)) for row in cursor.fetchall()]
+                               for i, value in enumerate(row)) for row in cursor.fetchall()]
         return Response(
             {"response": {"error": "OK", "result": apartment_list},
              "status": 201}, status=status.HTTP_201_CREATED)
-
-
-
-
 
 # class LogOutViewSet(viewsets.ModelViewSet):
 #     serializer_class = UserSerializer
