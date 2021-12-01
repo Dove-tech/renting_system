@@ -7,16 +7,11 @@ import { getCurrentUser } from './utils';
 class Detail extends Component {
   constructor(props) {
     super(props);
-    console.log("href", window.location.href);
-    let params = new URL(window.location).searchParams;
-    console.log(params.get("id"));
+    const params = new URL(window.location).searchParams;
     this.state = {
       apartment_id: params.get('id'),
       // user_id: this.props.userId,
       user_id: getCurrentUser(),
-      // user_id: 0,
-      // apartment_id: this.props.location,
-      // apartment_id: this.props.match,
       apartment_info: null
     };
   }
