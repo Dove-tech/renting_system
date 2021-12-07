@@ -103,7 +103,7 @@ class Detail extends Component {
             renderItem={(item, i) => (
               <List.Item>
                 <h3>Room Type {i + 1}</h3>
-                <img alt={item.name} src="https://liveatoctave.com/sites/liveatoctave.com/files/styles/floorplan_full_570x780/public/Octave_B1.jpg?itok=zPoP46fa" style={{maxWidth: '200px'}}/>
+                <img alt={item.name} src={item.photo_link} style={{maxWidth: '200px'}}/>
                 <Descriptions bordered>
                   <Descriptions.Item label="Description">{item.description}</Descriptions.Item>
                   <Descriptions.Item label="Price">${item.price}</Descriptions.Item>
