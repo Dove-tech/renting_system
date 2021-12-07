@@ -47,17 +47,24 @@ class Search extends Component {
                     />
                     {/* <Link to={{pathname: `/apartment/${item.id}`}}> */}
                     <Link to={{pathname: `/apartment?id=${item.id}`}}>
-                    <Descriptions title="Apartment Info" bordered>
-                        <Descriptions.Item label="Address">{item.address}</Descriptions.Item>
-                        <Descriptions.Item label="Utility">{item.utility}</Descriptions.Item>
-                        <Descriptions.Item label="Gym">{item.gym == 1 ? 'Yes' : 'No'}</Descriptions.Item>
-                        <Descriptions.Item label="Parking">{item.parking == 1 ? 'Yes' : 'No'}</Descriptions.Item>
-                        <Descriptions.Item label="Laundry">{item.laundry == 1 ? 'Yes' : 'No'}</Descriptions.Item>
-                        <Descriptions.Item label="Swimming pool">{item.swimming_pool == 1 ? 'Yes' : 'No'}</Descriptions.Item>
-                        <Descriptions.Item label="Price Range">${item.min_price}-{item.max_price}</Descriptions.Item>
-                        <Descriptions.Item label="Start date">{item.start_date}</Descriptions.Item>
-                        <Descriptions.Item label="End date" span={2}>{item.end_date}</Descriptions.Item>
-                    </Descriptions>
+                    <Row>
+                        <Col span="8">
+                            <img alt={item.name} src={item.photo_link} style={{maxWidth: '350px'}}/>
+                        </Col>
+                        <Col span="16">
+                            <Descriptions title="Apartment Info" bordered>
+                            <Descriptions.Item label="Address">{item.address}</Descriptions.Item>
+                            <Descriptions.Item label="Utility">{item.utility}</Descriptions.Item>
+                            <Descriptions.Item label="Gym">{item.gym == 1 ? 'Yes' : 'No'}</Descriptions.Item>
+                            <Descriptions.Item label="Parking">{item.parking == 1 ? 'Yes' : 'No'}</Descriptions.Item>
+                            <Descriptions.Item label="Laundry">{item.laundry == 1 ? 'Yes' : 'No'}</Descriptions.Item>
+                            <Descriptions.Item label="Swimming pool">{item.swimming_pool == 1 ? 'Yes' : 'No'}</Descriptions.Item>
+                            <Descriptions.Item label="Price Range">${item.min_price}-{item.max_price}</Descriptions.Item>
+                            <Descriptions.Item label="Start date">{item.start_date}</Descriptions.Item>
+                            <Descriptions.Item label="End date" span={2}>{item.end_date}</Descriptions.Item>
+                        </Descriptions>
+                        </Col>
+                    </Row>
                     </Link>
                 </List.Item>)
                }

@@ -64,10 +64,15 @@ class Detail extends Component {
           <Row>
             <Col span={12}><h1>{apartment_info.apartment_name}</h1></Col>
             {/* <Col span={8}><Button onClick={}></Button></Col> */}
-            <Col span={12}>Rating: {apartment_info.rating}</Col>
+            <Col span={12}><h1>Rating: {apartment_info.rating}</h1></Col>
           </Row>
           <Row>
-            <Col span={12}>
+            {apartment_info.photo_link && apartment_info.photo_link.map(photo => {
+              return <img alt={apartment_info.apartment_name} src={photo} style={{maxWidth: '400px'}}/>
+            })}
+          </Row>
+          <Row gutter={24}>
+            <Col className="gutter-row" span={12}>
               <Descriptions title="Apartment Info" bordered>
                 <Descriptions.Item label="Description">{apartment_info.department_description}</Descriptions.Item>
                 <Descriptions.Item label="Address">{apartment_info.address}</Descriptions.Item>
@@ -81,7 +86,7 @@ class Detail extends Component {
                 <Descriptions.Item label="End date" span={2}>{apartment_info.end_date}</Descriptions.Item> */}
               </Descriptions>
             </Col>
-            <Col span={12}>
+            <Col className="gutter-row" span={12}>
               <Descriptions title="Landlord Info" bordered>
                 {/* {} */}
                 <Descriptions.Item label="Name">{apartment_info.lanlord_info.name}</Descriptions.Item>
@@ -95,9 +100,11 @@ class Detail extends Component {
           <List
             itemLayout="horizontal"
             dataSource={apartment_info.rooms}
-            renderItem={item => (
+            renderItem={(item, i) => (
               <List.Item>
-                <Descriptions title="Room Info" bordered>
+                <h3>Room Type {i + 1}</h3>
+                <img alt={item.name} src="https://liveatoctave.com/sites/liveatoctave.com/files/styles/floorplan_full_570x780/public/Octave_B1.jpg?itok=zPoP46fa" style={{maxWidth: '200px'}}/>
+                <Descriptions bordered>
                   <Descriptions.Item label="Description">{item.description}</Descriptions.Item>
                   <Descriptions.Item label="Price">${item.price}</Descriptions.Item>
                   {/* <Descriptions.Item label="Add to Favorite"></Descriptions.Item> */}
