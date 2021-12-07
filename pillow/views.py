@@ -244,6 +244,14 @@ class SearchViewSet(viewsets.ModelViewSet):
         cursor.execute(query)
         rms = [dict((cursor.description[i][0], str(value))
                   for i, value in enumerate(row)) for row in cursor.fetchall()]
+        query = "select photo.photo_link from photo where property_room_id in (select id from Room where apartment_id = {})".format(apartment_id)
+        cursor = connection.cursor()
+        cursor.execute(query)
+        photo_room = cursor.fetchall()
+        temp2 = []
+        for photo in photo_room:
+            temp2.append(photo[0])
+        photo_room = temp2
         query = "select avg(star) from Rating where apartment_id = {}".format(apartment_id)
         cursor = connection.cursor()
         cursor.execute(query)
@@ -251,6 +259,7 @@ class SearchViewSet(viewsets.ModelViewSet):
         print(rating[0][0])
         try:
             a[0]["lanlord_info"] = ll[0]
+            a[0]["phoro_room_link"] = photo_room
             a[0]["photo_link"] = photos
             a[0]["rooms"] = rms
             a[0]["rating"] = round(rating[0][0],2)
